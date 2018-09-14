@@ -43,7 +43,7 @@ Now all you need to do is type `npm start` and the wallet should launch.
 
 You can build it manually following the [Application Distribution](https://electronjs.org/docs/tutorial/application-distribution) guide in the Electron documentation. 
 
-However the easiest way I have tried so far is using a npm package called `electron-packager`. In order to do so you need to install it globally by typing `npm install electron-packager -g`. 
+However, the easiest way I have tried so far is using a npm package called `electron-packager`. In order to do so you need to install it globally by typing `npm install electron-packager -g`. 
 
 Now you can build WalletShell by typing:
 
