@@ -1498,7 +1498,7 @@ function handleSendTransfer(){
             formMessageSet('send', 'warning', 'Sending transaction, please wait...<br><progress></progress>');
             wsmanager.sendTransaction(tx).then((result) => {
                 formMessageReset();
-                let okMsg = `Transaction sent!<br>Tx. hash: ${result.transactionHash}.<br>Your balance may appear incorrect while transaction not fully confirmed.`;
+                let okMsg = `Transaction sent!<br>Tx. hash: <a tabindex="0" class="external" href="https://turtle.land/?hash=${result.transactionHash}">${result.transactionHash}</a>.<br>Your balance may appear incorrect while transaction not fully confirmed.`;
                 formMessageSet('send', 'success', okMsg);
                 // check if it's new address, if so save it
                 let newId = wsutil.b2sSum(recAddress + recPayId);
