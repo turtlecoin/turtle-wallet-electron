@@ -306,7 +306,7 @@ function showFeeWarning(fee){
         <h5>Fee Info</h5>
         <p>You are connected to a public node (${settings.get('daemon_host')}:${settings.get('daemon_port')}) that charges a fee to send transactions.<p>
         <p>The fee for sending transactions is: <strong>${fee.toFixed(config.decimalPlaces)} ${config.assetTicker} </strong>.<br>
-            If you don't want to pay the node fee, please close your wallet, and update your settings to use different public node or your own node.
+            If you don't want to pay the node fee, please close your wallet, reopen and choose different public node (or run your own node).
         </p>
         <p style="text-align:center;margin-top: 1.25rem;"><button  type="button" class="form-bt button-green" id="dialog-end">OK, I Understand</button></p>
     `;

@@ -218,6 +218,7 @@ let jtfr = {
         config.appGitRepo,
         config.assetName,
         config.assetTicker,
+        config.walletServiceBinaryFilename
     ]
 };
 
@@ -706,6 +707,8 @@ function showInitialPage(){
 
     let versionInfo = document.getElementById('walletShellVersion');
     if(versionInfo) versionInfo.innerHTML = WS_VERSION;
+    let tsVersionInfo = document.getElementById('turtleServiceVersion');
+    if(tsVersionInfo) tsVersionInfo.innerHTML = config.walletServiceBinaryVersion;
 }
 
 // settings page handlers

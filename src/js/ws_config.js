@@ -16,6 +16,9 @@ config.walletFileDefaultExt = 'twl';
 // change this to match your wallet service executable filename
 config.walletServiceBinaryFilename = 'turtle-service';
 
+// version on the bundled service (turtle-service)
+config.walletServiceBinaryVersion = "v0.8.4";
+
 // default port number for your wallet service (e.g. turtle-service)
 config.walletServiceRpcPort = 8070;
 
@@ -23,13 +26,14 @@ config.walletServiceRpcPort = 8070;
 config.blockExplorerUrl = 'https://turtle.land/?hash=[[TX_HASH]]#blockchain_transaction';
 
 // default remote node to connect to, set this to a known reliable node for 'just works' user experience
-config.remoteNodeDefaultHost = 'public.turtlenode.io';
+config.remoteNodeDefaultHost = 'nodes.hashvault.pro';
 
 // remote node list update url, set to null if you don't have one
 config.remoteNodeListUpdateUrl = 'https://raw.githubusercontent.com/turtlecoin/turtlecoin-nodes-json/master/turtlecoin-nodes.json';
 
 // fallback remote node list, in case fetching update failed, fill this with known to works remote nodes
 config.remoteNodeListFallback = [
+    'nodes.hashvault.pro:11898',
     'public.turtlenode.io:11898',
     'public.turtlenode.net:11898',
 ];

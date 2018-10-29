@@ -20,7 +20,7 @@
   "devDependencies": {
     "devtron": "^1.4.0",
     "electron": "^3.0.6",
-    "electron-builder": "^20.28.4",
+    "electron-builder": "^20.29.0",
     "jshint": "^2.9.6"
   },
   "dependencies": {
@@ -41,7 +41,7 @@
       "buildResources": "build"
     },
     "linux": {
-      "artifactName": "${productName}-v${version}-${os}-${arch}.${ext}",
+      "artifactName": "${productName}-v${version}-${os}.${ext}",
       "target": [
         "AppImage",
         "tar.bz2"
