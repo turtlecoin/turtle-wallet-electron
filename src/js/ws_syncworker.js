@@ -205,7 +205,7 @@ function saveWallet(){
 function workOnTasks(){
     taskWorker = setInterval(() => {
         if(STATE_PAUSED) return;
-        logDebug(`workOnTasks: performing sync tasks`);
+        logDebug(`Running wallet synchronization tasks`);
         checkBlockUpdate();
         if(SAVE_COUNTER > 20){
             saveWallet();

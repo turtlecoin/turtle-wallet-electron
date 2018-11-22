@@ -47,7 +47,6 @@ var WalletShellManager = function(){
     this.serviceApi =  null;
     this.syncWorker = null;
     this.fusionTxHash = [];
-    
 };
 
 WalletShellManager.prototype.init = function(){
@@ -104,6 +103,19 @@ WalletShellManager.prototype.isRunning = function () {
         log.debug(`Process found: ${found}`);
         return found;
     });
+};
+
+WalletShellManager.prototype._writeIniConfig = function(cfg){
+    let configFile = wsession.get('walletConfig');
+    if(!configFile) return '';
+
+    try{
+        fs.writeFileSync(configFile, cfg);
+        return configFile;
+    }catch(err){
+        log.error(err);
+        return '';
+    }
 };
 
 WalletShellManager.prototype._writeConfig = function(cfg){
@@ -168,6 +180,16 @@ WalletShellManager.prototype.startService = function(walletFile, password, onErr
     );
 };
 
+WalletShellManager.prototype._argsToIni = function(args) {
+    let configData = "";
+    if("object" !== typeof args || !args.length) return configData;
+    args.forEach((k,v) => {
+        let sep = ((v%2) === 0) ? os.EOL : "=";
+        configData += `${sep}${k.toString().replace('--','')}`;
+    });
+    return configData.trim();
+};
+
 WalletShellManager.prototype._spawnService = function(walletFile, password, onError, onSuccess, onDelay){
     this.init();
     let file = path.basename(walletFile);
@@ -177,8 +199,8 @@ WalletShellManager.prototype._spawnService = function(walletFile, password, onEr
     );
 
     let serviceArgs = this.serviceArgsDefault.concat([
-        '-w', walletFile,
-        '-p', password,
+        '--container-file', walletFile,
+        '--container-password', password,
         '--enable-cors', '*',
         '--daemon-address', this.daemonHost,
         '--daemon-port', this.daemonPort,
@@ -190,28 +212,23 @@ WalletShellManager.prototype._spawnService = function(walletFile, password, onEr
         serviceArgs.push(logFile);
     }
 
-    let newConfig = {
-        'container-file': walletFile,
-        'container-password': password,
-        'enable-cors' : '*',
-        'daemon-address': this.daemonHost,
-        'daemon-port': this.daemonPort,
-        'log-level': SERVICE_LOG_LEVEL
-    };
-
-    if(SERVICE_LOG_LEVEL > 0){
-        newConfig['log-file'] = logFile;
-    }
-
-    let walletConfig = wsutil.mergeObj(this.walletConfigDefault, newConfig);
-    let configFile = this._writeConfig(walletConfig);
+    
+    let configFile = wsession.get('walletConfig', null);
     if(configFile){
-        serviceArgs = ['--config',configFile];
+        let configFormat = settings.get('configFormat','ini');
+        if(configFormat === 'json'){
+            childProcess.execFile(this.serviceBin, serviceArgs.concat(['--save-config', configFile]), (error) => {
+                if(error) configFile = null;
+            });
+        }else{
+            let newConfig = this._argsToIni(serviceArgs);
+            configFile = this._writeIniConfig(newConfig);
+        }
+        serviceArgs = ['--config', configFile];
     }else{
         log.warn('Failed to create config file, fallback to cmd args ');
     }
 
-    // if(scanHeight && scanHeight > 1024) walletArgs = walletArgs.concat(['--scan-height', scanHeight]);
     let wsm = this;
     log.debug('Starting service...');
     try{
@@ -223,9 +240,9 @@ WalletShellManager.prototype._spawnService = function(walletFile, password, onEr
         return false;
     }
     
-    this.serviceProcess.on('close', (code, signal) => {
+    this.serviceProcess.on('close', () => {
         this.terminateService(true);
-        log.debug(`${config.walletServiceBinaryFilename} closed, signal: ${signal}, code: ${code}`);
+        log.debug(`${config.walletServiceBinaryFilename} closed`);
     });
 
     this.serviceProcess.on('error', (err) => {
@@ -325,7 +342,7 @@ WalletShellManager.prototype.terminateService = function(force) {
     if(!this.serviceStatus()) return;
     force = force || false;
     let signal = force ? 'SIGKILL' : 'SIGTERM';
-    log.debug(`terminating with ${signal}`);
+    //log.debug(`terminating with ${signal}`);
     // ugly!
     this.serviceLastPid = this.servicePid;
     try{

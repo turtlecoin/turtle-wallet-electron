@@ -122,7 +122,7 @@ function populateElementVars(){
     // generics
     genericBrowseButton = document.querySelectorAll('.path-input-button');
     genericFormMessage = document.getElementsByClassName('form-ew');
-    genericEnterableInputs = document.querySelectorAll('.section input');
+    genericEnterableInputs = document.querySelectorAll('.section input:not(.noenter)');
     genericEditableInputs = document.querySelectorAll('textarea:not([readonly]), input:not([readonly]');
 
     // main section link
@@ -476,22 +476,6 @@ function changeSection(sectionId, isSettingRedir) {
         if(targetSection === 'section-overview-load'){
             initNodeCompletion();
         }
-        // if(targetSection === 'section-settings'){           
-        //     let defaultText = 'Type first few character(s) and select from public node list, or type to your own node address';
-        //     if(isServiceReady){
-        //         settingsInputDaemonAddress.setAttribute('disabled','disabled');
-        //         settingsInputDaemonPort.setAttribute('disabled','disabled');
-        //         settingsDaemonHostFormHelp.innerHTML = "Please close your current wallet if you want to update node setting";
-        //         settingsDaemonPortFormHelp.innerHTML = "Please close your current wallet if you want to update node setting";
-        //     }else{
-        //         settingsInputDaemonAddress.removeAttribute('disabled');
-        //         settingsInputDaemonPort.removeAttribute('disabled');
-        //         settingsDaemonHostFormHelp.innerHTML = defaultText;
-        //         settingsDaemonPortFormHelp.innerHTML = '';
-        //         // re-randomize public node selection
-        //         initNodeCompletion();
-        //     }
-        // }
         finalTarget = targetSection;
         toastMsg = '';
     }
@@ -734,7 +718,9 @@ function handleSettings(){
             tray_minimize: settingsInputMinToTray.checked,
             tray_close: settingsInputCloseToTray.checked
         };
+
         initSettingVal(vals);
+        remote.app.checkUpdateConfig(); // re-check config format
         formMessageReset();
         initNodeCompletion();
         let goTo = wsession.get('loadedWalletAddress').length ? 'section-overview' : 'section-welcome';

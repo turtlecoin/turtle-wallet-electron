@@ -10,7 +10,7 @@
             <div id="transaction-lists" class="list-tables hidden">
                 <div class="tx-tools">
                     <div class="tx-search">
-                    <input tabindex="0" id="tx-search" class="text-block search" placeholder="Search by anything..." />
+                    <input tabindex="0" id="tx-search" class="text-block search noenter" placeholder="Search by anything..." />
                     </div>
                     <div class="tx-sort">
                         Sort by:
@@ -28,7 +28,7 @@
             <div class="input-wrap button-wrap" style="padding: 0;margin-top: 1rem;">
                 <input type="hidden" id="transaction-updated" value="0" />
                 <input type="hidden" id="transaction-notify" value="0" />
-                <button type="button" class="hidden button-green small" id="button-transactions-refresh">Refresh</button>
+                <button tabindex="-1" type="button" class="hidden button-green small" id="button-transactions-refresh">Refresh</button>
             </div>
         </div>
     </section>

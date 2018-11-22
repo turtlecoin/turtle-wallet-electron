@@ -19,7 +19,7 @@ log.transports.console.level = LOG_LEVEL;
 log.transports.file.level = LOG_LEVEL;
 log.transports.file.maxSize = 5 * 1024 * 1024;
 
-const WALLETSHELL_VERSION = app.getVersion() || '0.3.4';
+const WALLETSHELL_VERSION = app.getVersion() || '0.3.6';
 const SERVICE_FILENAME =  (platform === 'win32' ? `${config.walletServiceBinaryFilename}.exe` : config.walletServiceBinaryFilename );
 const SERVICE_OSDIR = (platform === 'win32' ? 'win' : (platform === 'darwin' ? 'osx' : 'lin'));
 const DEFAULT_SERVICE_BIN = path.join(process.resourcesPath,'bin', SERVICE_OSDIR, SERVICE_FILENAME);
@@ -37,10 +37,7 @@ const DEFAULT_SETTINGS = {
     tray_close: false,
     darkmode: true
 };
-const DEFAULT_SIZE = {
-    width: 840,
-    height: 680
-};
+const DEFAULT_SIZE = { width: 840, height: 680 };
 
 app.prompExit = true;
 app.prompShown = false;
@@ -259,24 +256,66 @@ function doNodeListUpdate(){
     }
 }
 
-function serviceBinCheck(){
-    //if(settings.has('firstRun')) return;
-    if(!DEFAULT_SERVICE_BIN.startsWith('/tmp')) return;
+function serviceConfigFormatCheck(){
+    let serviceBin = settings.get('service_bin', false);
+    let semver = require('semver');
+    require('child_process').execFile(
+        serviceBin, ["--version"], (error, stdout) => {
+            if(error){
+                console.log(error);
+                settings.set('configFormat', 'ini');
+                return;
+            }
 
+            try{
+                let verout = stdout.trim();
+                let version = verout.split(' ')[1];
+                if(!version){
+                    version = verout.slice(
+                        verout.indexOf(config.assetName),
+                        verout.indexOf('(')
+                    );
+                }
+                version = semver.coerce(version.trim());
+                settings.set(
+                    'configFormat', 
+                    semver.lt('0.8.4', version) ? 'json' : 'ini'
+                );
+                log.info(
+                    `Service version: ${version}, config format: ${settings.get('configFormat')}`
+                );
+            }catch(_e){}
+        }
+    );
+}
+
+app.checkUpdateConfig = serviceConfigFormatCheck;
+
+function serviceBinCheck(){
+    if(!DEFAULT_SERVICE_BIN.startsWith('/tmp')){
+        serviceConfigFormatCheck();    
+        return;
+    }
+    
     log.warn(`AppImage env, copying service bin file`);
     let targetPath = path.join(app.getPath('userData'), SERVICE_FILENAME);
-    //log.debug('target Path: ' + targetPath);
-
-    fs.copyFile(DEFAULT_SERVICE_BIN, targetPath, (err) => {
+    try{
+        fs.renameSync(targetPath, `${targetPath}.bak`, (err) => {
+            if(err) log.error(err);
+        });
+    }catch(_e){}
+    
+    try{
+        fs.copyFile(DEFAULT_SERVICE_BIN, targetPath, (err) => {
         if (err){
             log.error(err);
-        }else{
-            settings.set('service_bin', targetPath);
-            log.debug(`service binary copied to ${targetPath}`);
+            return;
         }
-        //log.warn(`TurtleService copied to ${targetPath}`);
-        //settings.set('service_bin', targetPath);
-    });
+        settings.set('service_bin', targetPath);
+        log.debug(`service binary copied to ${targetPath}`);
+        serviceConfigFormatCheck();
+      });
+    }catch(_e){}
 }
 
 function initSettings(){
@@ -322,15 +361,12 @@ app.on('ready', () => {
     }
     
     createWindow();
-
-    // target center pos of primary display
+    // try to target center pos of primary display
     let eScreen = require('electron').screen;
     let primaryDisp = eScreen.getPrimaryDisplay();
     let tx = Math.ceil((primaryDisp.workAreaSize.width - DEFAULT_SIZE.width)/2);
     let ty = Math.ceil((primaryDisp.workAreaSize.height - (DEFAULT_SIZE.height))/2);
-    if(tx > 0 && ty > 0) win.setPosition(tx, ty);
-
-    
+    if(tx > 0 && ty > 0) win.setPosition(parseInt(tx, 10), parseInt(ty,10));
 });
 
 // Quit when all windows are closed.

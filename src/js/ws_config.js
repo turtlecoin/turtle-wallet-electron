@@ -17,7 +17,7 @@ config.walletFileDefaultExt = 'twl';
 config.walletServiceBinaryFilename = 'turtle-service';
 
 // version on the bundled service (turtle-service)
-config.walletServiceBinaryVersion = "v0.8.4";
+config.walletServiceBinaryVersion = "v0.10.0";
 
 // default port number for your wallet service (e.g. turtle-service)
 config.walletServiceRpcPort = 8070;

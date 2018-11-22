@@ -127,12 +127,6 @@ let decimalAdjust = (type, value, exp) => {
     return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
 };
 
-exports.validateTRTLAddress = (address) => {
-    if(!address) return false;
-    let re = new RegExp(/^TRTL(?=[aA-zZ0-9]*$)(?:.{95}|.{183})$/g);
-    return re.test(address);
-};
-
 exports.validateAddress = (address) => {
     return ADDRESS_REGEX.test(address);
 };
@@ -210,7 +204,6 @@ exports.isRegularFileAndWritable = (filePath) => {
     return stats.isFile();
 };
 
-
 exports.normalizeWalletFilename = (rawFilename) => {
     if(!rawFilename) return '';
     const walletExt = config.walletFileDefaultExt;
@@ -219,7 +212,6 @@ exports.normalizeWalletFilename = (rawFilename) => {
     if(ext.endsWith('.')) return `${rawFilename}${walletExt}`;
     return `${rawFilename}.${walletExt}`;
 };
-
 
 exports.validateWalletPath = (fullpath, defaultDir, isExisting) => {
     return new Promise((resolve, reject) => {

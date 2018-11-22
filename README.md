@@ -60,11 +60,6 @@ If you don't trust the bundled `turtle-service` file, you can compare the checks
 
 See: https://docs.appimage.org/user-guide/run-appimages.html
 
-#### GNU/Linux (tar.bz2 archive)
-1. Download latest archive here: https://github.com/turtlecoin//turtle-wallet-electron/releases
-2. Extract with file/archive manager of your choice.
-3. Run the executable binary (`walletshell-<version>/walletshell`)
-
 #### macOS (TBD/Untested)
 1. Download latest archive here: https://github.com/turtlecoin//turtle-wallet-electron/releases
 2. Extract downloaded tar archived

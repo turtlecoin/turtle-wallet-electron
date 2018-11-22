@@ -2,7 +2,7 @@
   "name": "walletshell",
   "productName": "WalletShell",
   "description": "TurtleCoin GUI Wallet",
-  "version": "v0.3.5",
+  "version": "v0.3.6",
   "homepage": "https://github.com/turtlecoin/turtle-wallet-electron",
   "repository": "https://github.com/turtlecoin/turtle-wallet-electron",
   "main": "main.js",
@@ -19,8 +19,8 @@
   "license": "ISC",
   "devDependencies": {
     "devtron": "^1.4.0",
-    "electron": "^3.0.6",
-    "electron-builder": "^20.29.0",
+    "electron": "^3.0.10",
+    "electron-builder": "^20.36.2",
     "jshint": "^2.9.6"
   },
   "dependencies": {
@@ -30,7 +30,8 @@
     "electron-store": "^2.0.0",
     "qr-image": "^3.2.0",
     "request": "^2.88.0",
-    "request-promise-native": "^1.0.5"
+    "request-promise-native": "^1.0.5",
+    "semver": "^5.6.0"
   },
   "build": {
     "appId": "lol.turtlecoin.walletshell",
@@ -43,8 +44,7 @@
     "linux": {
       "artifactName": "${productName}-v${version}-${os}.${ext}",
       "target": [
-        "AppImage",
-        "tar.bz2"
+        "AppImage"
       ],
       "maintainer": "rixombea (@labaylabay)",
       "category": "Office",
