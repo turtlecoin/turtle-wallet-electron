@@ -981,6 +981,12 @@ function handleWalletOpen(){
             return false;
         }
 
+		// validate password
+		if(!walletOpenInputPassword.value){
+			formMessageSet('load','error', `Please enter the password of the wallet!`);
+			return;
+		}
+
         let settingVals = {
             service_bin: settings.get('service_bin'),
             daemon_host: daemonHostValue,
