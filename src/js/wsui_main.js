@@ -1680,19 +1680,19 @@ function handleTransactions() {
                 setTxFiller();
                 txGrid.style.width = "100%";
                 setTimeout(function () {
-                    gridOptions.api.doLayout();
-                    gridOptions.api.sizeColumnsToFit();
+                    window.TXOPTSAPI.api.doLayout();
+                    window.TXOPTSAPI.api.sizeColumnsToFit();
                     sortDefault();
                 }, 100);
             };
 
             window.addEventListener('resize', () => {
-                gridOptions.api.sizeColumnsToFit();
+                window.TXOPTSAPI.api.sizeColumnsToFit();
             });
 
             let txfilter = document.getElementById('tx-search');
             txfilter.addEventListener('input', function () {
-                gridOptions.api.setQuickFilter(this.value);
+                window.TXOPTSAPI.api.setQuickFilter(this.value);
             });
         } else {
             window.TXOPTSAPI.api.updateRowData({ add: txs, addIndex: 0 });
