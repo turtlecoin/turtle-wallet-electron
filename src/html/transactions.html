@@ -7,6 +7,7 @@
                    Either you haven't made any transaction or your wallet still being synchronized.
                 </p>
             </div>
+            <!-- <div id="transaction-lists" class="list-tables hidden"> -->
             <div id="transaction-lists" class="list-tables hidden">
                 <div class="tx-tools">
                     <div class="tx-search">
@@ -14,16 +15,18 @@
                     </div>
                     <div class="tx-sort">
                         Sort by:
+                        <span tabindex="0" class="csort" data-dir="0" id="txSortTime">Date</span>
                         <span  tabindex="0" class="csort" data-dir="0" id="txSortAmount">Amount</span>
-                        <span  tabindex="0" class="csort" data-dir="0" id="txSortTime">Date</span>
                     </div>
                 </div>
-                <div class="transaction-table-wrapper">
+                <!-- <div class="transaction-table-wrapper">
                     <table class="custom-table transaction-list-table" id="transaction-list-table">
                         <tbody class="list"></tbody>
                     </table>
+                </div> -->
+
+                <div id="txGrid" class="ag-theme-balham transaction-table-wrapper  transaction-list-table" style="height: 428px;width:100%;">
                 </div>
-                <ul class="pagination"></ul>
             </div>
             <div class="input-wrap button-wrap" style="padding: 0;margin-top: 1rem;">
                 <input type="hidden" id="transaction-updated" value="0" />

@@ -190,7 +190,7 @@ WalletShellManager.prototype._argsToIni = function (args) {
     return configData.trim();
 };
 
-WalletShellManager.prototype._spawnService = function (walletFile, password, onError, onSuccess, onDelay, onTimeout) {
+WalletShellManager.prototype._spawnService = function (walletFile, password, onError, onSuccess, onDelay) {
     this.init();
     let file = path.basename(walletFile);
     let logFile = path.join(
@@ -307,13 +307,16 @@ WalletShellManager.prototype._spawnService = function (walletFile, password, onE
 };
 
 WalletShellManager.prototype.stopService = function () {
+    log.debug('stopping service');
     this.init();
     let wsm = this;
     return new Promise(function (resolve) {
         if (wsm.serviceStatus()) {
+            log.debug("Service is running");
             wsm.serviceLastPid = wsm.serviceProcess.pid;
             wsm.stopSyncWorker(true);
             wsm.serviceApi.save().then(() => {
+                log.debug('saving wallet');
                 try {
                     wsm.terminateService(true);
                     wsm._reinitSession();
@@ -334,6 +337,7 @@ WalletShellManager.prototype.stopService = function () {
                 }, 10000);
             });
         } else {
+            console.log("Service is not running");
             wsm._reinitSession();
             resolve(false);
         }
@@ -418,7 +422,8 @@ WalletShellManager.prototype.startSyncWorker = function () {
 };
 
 WalletShellManager.prototype.stopSyncWorker = function () {
-    if (null === this.syncWorker) return;
+    //if (null === this.syncWorker) return;
+    log.debug('stopping syncworker');
 
     try {
         this.syncWorker.send({ type: 'stop', data: {} });

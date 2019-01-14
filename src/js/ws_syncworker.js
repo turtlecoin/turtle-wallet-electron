@@ -179,6 +179,17 @@ function delayReleaseSaveState() {
     }, 3000);
 }
 
+// function doExit() {
+//     if (taskWorker === undefined || taskWorker === null) {
+//         try {
+//             clearInterval(taskWorker);
+//             process.exit(0);
+//         } catch (e) {
+//             logDebug(`FAILED, ${e.message}`);
+//         }
+//     }
+// }
+
 function saveWallet() {
     if (!SERVICE_CFG) return;
     if (STATE_PENDING_SAVE) {
@@ -192,11 +203,13 @@ function saveWallet() {
             logDebug(`saveWallet: OK`);
             STATE_SAVING = false;
             STATE_PENDING_SAVE = false;
+            //if(exit) doExit();
             return true;
         }).catch((err) => {
             STATE_PENDING_SAVE = true;
             logDebug(`saveWallet: FAILED, ${err.message}`);
             delayReleaseSaveState();
+            //if (exit) doExit();
             return false;
         });
     }, 2222);
@@ -293,12 +306,14 @@ process.on('message', (msg) => {
             logDebug('Got stop command, halting all tasks and exit...');
             TX_SKIPPED_COUNT = 0;
             SERVICE_CFG = wsapi = null;
+            //saveWallet(true);
             if (taskWorker === undefined || taskWorker === null) {
                 try {
                     clearInterval(taskWorker);
                     process.exit(0);
                 } catch (e) {
                     logDebug(`FAILED, ${e.message}`);
+                    process.exit(1);
                 }
             }
             break;

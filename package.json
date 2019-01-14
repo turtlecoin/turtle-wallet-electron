@@ -19,12 +19,13 @@
   "license": "ISC",
   "devDependencies": {
     "devtron": "^1.4.0",
-    "electron": "^3.0.14",
+    "electron": "^3.1.0",
     "electron-builder": "^20.38.4",
     "jshint": "^2.9.7"
   },
   "dependencies": {
     "@trodi/electron-splashscreen": "^0.3.4",
+    "ag-grid-community": "^19.1.4",
     "async": "^2.6.1",
     "csv-writer": "^1.2.0",
     "electron-log": "^2.2.17",
