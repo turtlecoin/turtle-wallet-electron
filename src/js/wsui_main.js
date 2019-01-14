@@ -14,6 +14,7 @@ const WalletShellSession = require('./ws_session');
 const WalletShellManager = require('./ws_manager');
 const config = require('./ws_config');
 const async = require('async');
+const AgGrid = require('ag-grid-community');
 const wsmanager = new WalletShellManager();
 const wsession = new WalletShellSession();
 const settings = new Store({ name: 'Settings' });
@@ -30,7 +31,6 @@ const DEFAULT_WALLET_PATH = remote.app.getPath('documents');
 
 let WALLET_OPEN_IN_PROGRESS = false;
 let FUSION_IN_PROGRESS = false;
-let TXLIST_OBJ = null;
 let COMPLETION_ADDRBOOK;
 
 /*  dom elements vars; */
@@ -475,10 +475,6 @@ function changeSection(sectionId, isSettingRedir) {
         showToast("Please wait until syncing process completed!");
         return;
     } else {
-        // new node test
-        // if(targetSection === 'section-overview-load'){
-        //     initNodeCompletion();
-        // }
         finalTarget = targetSection;
         toastMsg = '';
     }
@@ -517,14 +513,16 @@ function changeSection(sectionId, isSettingRedir) {
 function initNodeSelection(nodeAddr) {
     let selected = nodeAddr || settings.get('node_address');
     let customNodes = settings.get('pubnodes_custom');
-    let aliveNodes = wsutil.arrShuffle(settings.get('pubnodes_checked', []));
+    let aliveNodes = settings.get('pubnodes_checked', []);
 
+    walletOpenInputNode.removeAttribute('disabled');
     walletOpenInputNode.options.length = 0;
 
     if (!aliveNodes.length && settings.has('pubnodes_data')) {
         customNodes = customNodes.concat(settings.get('pubnodes_data'));
     }
 
+    aliveNodes = wsutil.arrShuffle(aliveNodes);
     customNodes.forEach(node => {
         let opt = document.createElement('option');
         opt.text = `${node} (Custom)`;
@@ -665,11 +663,8 @@ function setTxFiller(show) {
         fillerRow.classList.add('hidden');
         txRow.classList.remove('hidden');
     } else {
-        let hasItemRow = document.querySelector('#transaction-list-table > tbody > tr.txlist-item');
-        if (!hasItemRow) {
-            txRow.classList.add('hidden');
-            fillerRow.classList.remove('hidden');
-        }
+        txRow.classList.add('hidden');
+        fillerRow.classList.remove('hidden');
     }
 }
 
@@ -678,7 +673,6 @@ function showInitialPage() {
     // other initiations here
     formMessageReset();
     initSettingVal(); // initial settings value
-    //initNodeCompletion(); // initial public node completion list
     initAddressCompletion();
 
     if (!settings.has('firstRun') || settings.get('firstRun') !== 0) {
@@ -722,7 +716,6 @@ function handleSettings() {
         initSettingVal(vals);
 
         formMessageReset();
-        //initNodeCompletion();
         let goTo = wsession.get('loadedWalletAddress').length ? 'section-overview' : 'section-welcome';
         changeSection(goTo, true);
         showToast('Settings has been updated.', 8000);
@@ -969,7 +962,7 @@ function handleWalletOpen() {
                 <span class="form-ew form-msg text-spaced-error hidden" id="text-customnode-error"></span>
             </div>
             <div class="div-panel-buttons">
-                <button id="saveCustomNode" type="button" class="button-green dialog-close-default">Save & activate</button>
+                <button id="saveCustomNode" type="button" class="button-green">Save & activate</button>
                 <button  data-target="#ab-dialog" type="button" class="button-gray dialog-close-default">Close</button>
             </div>
             `;
@@ -993,18 +986,18 @@ function handleWalletOpen() {
         }
 
         let validHost = nodeAddress[0] === 'localhost' ? true : false;
-        if (net.isIP(nodeAddress[0])) validHost = true;
+        if (net.isIPv4(nodeAddress[0])) validHost = true;
         if (!validHost) {
             let domRe = new RegExp(/([a-z])([a-z0-9]+\.)*[a-z0-9]+\.[a-z.]+/i);
             if (domRe.test(nodeAddress[0])) validHost = true;
         }
         if (!validHost) {
-            formMessageSet('customnode', 'error', `Invalid daemon/node address!`);
+            formMessageSet('customnode', 'error', 'Invalid node address');
             return false;
         }
 
         if (parseInt(nodeAddress[1], 10) <= 0) {
-            formMessageSet('customnode', 'error', `Invalid daemon/node port number!`);
+            formMessageSet('customnode', 'error', 'Invalid port');
             return false;
         }
 
@@ -1028,7 +1021,7 @@ function handleWalletOpen() {
         let nodeAddress = nodeAddressValue.split(':');
 
         let validHost = nodeAddress[0] === 'localhost' ? true : false;
-        if (net.isIP(nodeAddress[0])) validHost = true;
+        if (net.isIPv4(nodeAddress[0])) validHost = true;
         if (!validHost) {
             let domRe = new RegExp(/([a-z])([a-z0-9]+\.)*[a-z0-9]+\.[a-z.]+/i);
             if (domRe.test(nodeAddress[0])) validHost = true;
@@ -1069,13 +1062,6 @@ function handleWalletOpen() {
             return false;
         }
 
-        function onTimeout(err) {
-            console.log(err);
-            // formMessageReset();
-            // WALLET_OPEN_IN_PROGRESS = false;
-            // setOpenButtonsState(0);
-        }
-
         //function onSuccess(theWallet, scanHeight){
         function onSuccess() {
             walletOpenInputPath.value = settings.get('recentWallet');
@@ -1113,7 +1099,7 @@ function handleWalletOpen() {
                 formMessageSet('load', 'warning', "Starting wallet service...<br><progress></progress>");
                 setTimeout(() => {
                     formMessageSet('load', 'warning', "Opening wallet, please be patient...<br><progress></progress>");
-                    wsmanager.startService(walletFile, walletPass, onError, onSuccess, onDelay, onTimeout);
+                    wsmanager.startService(walletFile, walletPass, onError, onSuccess, onDelay);
                 }, 800);
             }).catch((err) => {
                 console.log(err);
@@ -1138,9 +1124,11 @@ function handleWalletClose() {
         dialog = document.getElementById('main-dialog');
         dialog.showModal();
         // save + SIGTERMed wallet daemon
+        // reset tx
+        resetTransactions();
         wsmanager.stopService().then(() => {
             setTimeout(function () {
-                // cleare form err msg
+                // clear form err msg
                 formMessageReset();
                 changeSection('section-overview');
                 // update/clear tx
@@ -1162,15 +1150,6 @@ function handleWalletClose() {
                 if (dialog.hasAttribute('open')) dialog.close();
                 wsmanager.resetState();
                 wsutil.clearChild(dialog);
-                try {
-                    if (null !== TXLIST_OBJ) {
-                        TXLIST_OBJ.clear();
-                        TXLIST_OBJ.update();
-                    }
-
-                    TXLIST_OBJ = null;
-                } catch (e) { }
-                setTxFiller(true);
             }, 1200);
         }).catch((err) => {
             wsmanager.terminateService(true);
@@ -1332,10 +1311,10 @@ function handleWalletImportSeed() {
 
             settings.set('recentWalletDir', path.dirname(finalPath));
 
-            // user already confirm to overwrite
+            // user already confirm to overwrite, but...
             if (wsutil.isRegularFileAndWritable(finalPath)) {
                 try {
-                    // for now, backup instead of delete, just to be save
+                    // backup instead of delete
                     let ts = new Date().getTime();
                     let backfn = `${finalPath}.bak${ts}`;
                     fs.renameSync(finalPath, backfn);
@@ -1601,58 +1580,184 @@ function handleSendTransfer() {
     });
 }
 
+function resetTransactions() {
+    setTxFiller(true);
+    if (window.TXGRID === null || window.TXOPTSAPI === null) {
+        return;
+    }
+    window.TXOPTSAPI.api.destroy();
+    window.TXOPTSAPI = null;
+    window.TXGRID = null;
+    if (document.querySelector('.txlist-item')) {
+        let grid = document.getElementById('txGrid');
+        wsutil.clearChild(grid);
+    }
+
+}
+
+window.TXOPTSAPI = null;
+window.TXGRID = null;
 function handleTransactions() {
-    // tx list options
-    let txListOpts = {
-        valueNames: [
-            {
-                data: [
-                    'rawPaymentId', 'rawHash', 'txType', 'rawAmount', 'rawFee',
-                    'fee', 'timestamp', 'blockIndex', 'extra', 'isBase', 'unlockTime'
-                ]
-            },
-            'amount', 'timeStr', 'paymentId', 'transactionHash', 'fee'
-        ],
-        item: `<tr title="click for detail..." class="txlist-item">
-                <td class="txinfo">
-                    <p class="timeStr tx-date"></p>
-                    <p class="tx-ov-info">Tx. Hash: <span class="transactionHash"></span></p>
-                    <p class="tx-ov-info">Payment ID: <span class="paymentId"></span></p>
-                </td><td class="amount txamount"></td>
-        </tr>`,
-        searchColumns: ['transactionHash', 'paymentId', 'timeStr', 'amount'],
-        indexAsync: true
-    };
-    // tx detail
+    function resetTxSortMark() {
+        let sortedEl = document.querySelectorAll('#transaction-lists .asc, #transaction-lists .desc');
+        Array.from(sortedEl).forEach((el) => {
+            el.classList.remove('asc');
+            el.classList.remove('desc');
+        });
+    }
+
+    function sortDefault() {
+        resetTxSortMark();
+        window.TXOPTSAPI.api.setSortModel(getSortModel('timestamp', 'desc'));
+        txButtonSortDate.dataset.dir = 'desc';
+        txButtonSortDate.classList.add('desc');
+    }
+
+    function getSortModel(col, dir) {
+        return [{ colId: col, sort: dir }];
+    }
+
+    function renderList(txs) {
+        setTxFiller();
+        if (window.TXGRID === null) {
+            let columnDefs = [
+                {
+                    headerName: 'Data',
+                    field: 'timestamp',
+                    autoHeight: true,
+                    cellClass: 'txinfo',
+                    cellRenderer: function (params) {
+                        let out = `
+                            <p class="tx-date">${params.data.timeStr}</p>
+                            <p class="tx-ov-info">Tx. Hash: ${params.data.transactionHash}</p>
+                            <p class="tx-ov-info">Payment ID: ${params.data.paymentId}</p>
+                            `;
+                        return out;
+                    },
+                    getQuickFilterText: function (params) {
+                        let txdate = new Date(params.data.timeStr).toLocaleString(
+                            'en-US',
+                            { weekday: 'long', year: 'numeric', month: 'long', timeZone: 'UTC' }
+                        );
+                        let search_data = `${txdate} ${params.data.transactionHash}`;
+                        if (params.data.paymentId !== '-') {
+                            search_data += ` ${params.data.paymentId}`;
+                        }
+                        if (params.data.extra !== '-') {
+                            search_data += ` ${params.data.extra}`;
+                        }
+                        search_data += ` ${params.data.amount}`;
+                        return search_data;
+                    }
+                },
+                {
+                    headerName: "Amount",
+                    field: "rawAmount",
+                    width: 200,
+                    suppressSizeToFit: true,
+                    cellClass: ['amount', 'tx-amount'],
+                    cellRenderer: function (params) {
+                        return `<span data-txType="${params.data.txType}">${params.data.amount}</span>`;
+                    },
+                    suppressFilter: true,
+                    getQuickFilterText: function () { return null; }
+                }
+            ];
+            let gridOptions = {
+                columnDefs: columnDefs,
+                rowData: txs,
+                pagination: true,
+                rowClass: 'txlist-item',
+                paginationPageSize: 20,
+                cacheQuickFilter: true,
+                enableSorting: true
+            };
+            let txGrid = document.getElementById('txGrid');
+            window.TXGRID = new AgGrid.Grid(txGrid, gridOptions);
+            window.TXOPTSAPI = gridOptions;
+
+            gridOptions.onGridReady = function () {
+                setTxFiller();
+                txGrid.style.width = "100%";
+                setTimeout(function () {
+                    gridOptions.api.doLayout();
+                    gridOptions.api.sizeColumnsToFit();
+                    sortDefault();
+                }, 100);
+            };
+
+            window.addEventListener('resize', () => {
+                gridOptions.api.sizeColumnsToFit();
+            });
+
+            let txfilter = document.getElementById('tx-search');
+            txfilter.addEventListener('input', function () {
+                gridOptions.api.setQuickFilter(this.value);
+            });
+        } else {
+            window.TXOPTSAPI.api.updateRowData({ add: txs, addIndex: 0 });
+            window.TXOPTSAPI.api.resetQuickFilter();
+            sortDefault();
+        }
+    }
+
+    function listTransactions() {
+        if (wsession.get('txLen') <= 0) {
+            //setTxFiller(true);
+            return;
+        }
+
+        let txs = wsession.get('txNew');
+        if (!txs.length) {
+            //if(window.TXGRID === null ) setTxFiller(true);
+            return;
+        }
+        setTxFiller();
+        renderList(txs);
+    }
+
+    // txupdate
+    txInputUpdated.addEventListener('change', (event) => {
+        let updated = parseInt(event.target.value, 10) === 1;
+        if (!updated) return;
+        txInputUpdated.value = 0;
+        listTransactions();
+    });
+
+    txButtonRefresh.addEventListener('click', listTransactions);
+
     function showTransaction(el) {
-        let tx = (el.name === "tr" ? el : el.closest('tr'));
-        let txdate = new Date(tx.dataset.timestamp * 1000).toUTCString();
-        let txhashUrl = `<a class="external" title="view in block explorer" href="${config.blockExplorerUrl.replace('[[TX_HASH]]', tx.dataset.rawhash)}">View in block explorer</a>`;
+        let row = el.classList.contains('txlist-item') ? el : el.closest('.txlist-item');
+        let txdata = wsession.get('txList');
+        let index = row.getAttribute('row-id');
+        let tx = txdata[index];
+        let txdate = new Date(tx.timestamp * 1000).toUTCString();
+        let txhashUrl = `<a class="external" title="view in block explorer" href="${config.blockExplorerUrl.replace('[[TX_HASH]]', tx.transactionHash)}">View in block explorer</a>`;
         let dialogTpl = `
                 <div class="div-transactions-panel">
                     <h4>Transaction Detail</h4>
                     <table class="custom-table" id="transactions-panel-table">
                         <tbody>
                             <tr><th scope="col">Hash</th>
-                                <td data-cplabel="Tx. hash" class="tctcl">${tx.dataset.rawhash}</td></tr>
+                                <td data-cplabel="Tx. hash" class="tctcl">${tx.transactionHash}</td></tr>
                             <tr><th scope="col">Address</th>
                                 <td data-cplabel="Address" class="tctcl">${wsession.get('loadedWalletAddress')}</td></tr>
                             <tr><th scope="col">Payment Id</th>
-                                <td data-cplabel="Payment ID" class="tctcl">${tx.dataset.rawpaymentid}</td></tr>
+                                <td data-cplabel="Payment ID" class="${tx.paymentId !== '-' ? 'tctcl' : 'xtctl'}">${tx.paymentId}</td></tr>
                             <tr><th scope="col">Amount</th>
-                                <td data-cplabel="Tx. amount" class="tctcl">${tx.dataset.rawamount}</td></tr>
+                                <td data-cplabel="Tx. amount" class="tctcl">${tx.amount}</td></tr>
                             <tr><th scope="col">Fee</th>
-                                <td  data-cplabel="Tx. fee" class="tctcl">${tx.dataset.rawfee}</td></tr>
+                                <td  data-cplabel="Tx. fee" class="tctcl">${tx.fee}</td></tr>
                             <tr><th scope="col">Timestamp</th>
-                                <td data-cplabel="Tx. date" class="tctcl">${tx.dataset.timestamp} (${txdate})</td></tr>
+                                <td data-cplabel="Tx. date" class="tctcl">${tx.timestamp} (${txdate})</td></tr>
                             <tr><th scope="col">Block Index</th>
-                                <td data-cplabel="Tx. block index" class="tctcl">${tx.dataset.blockindex}</td></tr>
+                                <td data-cplabel="Tx. block index" class="tctcl">${tx.blockIndex}</td></tr>
                             <tr><th scope="col">Is Base?</th>
-                                <td>${tx.dataset.isbase}</td></tr>
+                                <td>${tx.isBase}</td></tr>
                             <tr><th scope="col">Extra</th>
-                                <td data-cplabel="Tx. extra" class="tctcl">${tx.dataset.extra}</td></tr>
+                                <td data-cplabel="Tx. extra" class="${tx.extra !== '-' ? 'tctcl' : 'xtctl'}">${tx.extra}</td></tr>
                             <tr><th scope="col">Unlock Time</th>
-                                <td>${tx.dataset.unlocktime}</td></tr>
+                                <td>${tx.unlockTime}</td></tr>
                         </tbody>
                     </table>
                     <p class="text-center">${txhashUrl}</p>
@@ -1667,60 +1772,36 @@ function handleTransactions() {
         dialog = document.getElementById('tx-dialog');
         dialog.showModal();
     }
+    // tx detail
+    wsutil.liveEvent('.txlist-item', 'click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        return showTransaction(event.target);
+    }, document.getElementById('txGrid'));
 
-    function sortAmount(a, b) {
-        var aVal = parseFloat(a._values.amount.replace(/[^0-9.-]/g, ""));
-        var bVal = parseFloat(b._values.amount.replace(/[^0-9.-]/g, ""));
-        if (aVal > bVal) return 1;
-        if (aVal < bVal) return -1;
-        return 0;
-    }
+    // sort
+    txButtonSortAmount.addEventListener('click', (event) => {
+        event.preventDefault();
+        let currentDir = event.target.dataset.dir;
+        let targetDir = (currentDir === 'desc' ? 'asc' : 'desc');
+        event.target.dataset.dir = targetDir;
+        resetTxSortMark();
+        event.target.classList.add(targetDir);
+        window.TXOPTSAPI.api.setSortModel(getSortModel('rawAmount', targetDir));
+    });
+    
 
-    function resetTxSortMark() {
-        let sortedEl = document.querySelectorAll('#transaction-lists .asc, #transaction-lists .desc');
-        Array.from(sortedEl).forEach((el) => {
-            el.classList.remove('asc');
-            el.classList.remove('desc');
-        });
-    }
+    txButtonSortDate.addEventListener('click', (event) => {
+        event.preventDefault();
+        let currentDir = event.target.dataset.dir;
+        let targetDir = (currentDir === 'desc' ? 'asc' : 'desc');
+        event.target.dataset.dir = targetDir;
+        resetTxSortMark();
+        event.target.classList.add(targetDir);
+        window.TXOPTSAPI.api.setSortModel(getSortModel('timestamp', targetDir));
+    });
 
-    function listTransactions() {
-        if (wsession.get('txLen') <= 0) {
-            setTxFiller(true);
-            return;
-        }
-
-        let txs = wsession.get('txNew');
-        if (!txs.length) {
-            if (TXLIST_OBJ === null || TXLIST_OBJ.size() <= 0) setTxFiller(true);
-            return;
-        }
-
-        setTxFiller(false);
-        let txsPerPage = 20;
-        if (TXLIST_OBJ === null) {
-            if (txs.length > txsPerPage) {
-                txListOpts.page = txsPerPage;
-                txListOpts.pagination = [{
-                    innerWindow: 2,
-                    outerWindow: 1
-                }];
-            }
-            TXLIST_OBJ = new List('transaction-lists', txListOpts, txs);
-            TXLIST_OBJ.sort('timestamp', { order: 'desc' });
-            resetTxSortMark();
-            txButtonSortDate.classList.add('desc');
-            txButtonSortDate.dataset.dir = 'desc';
-        } else {
-            setTxFiller(false);
-            TXLIST_OBJ.add(txs);
-            TXLIST_OBJ.sort('timestamp', { order: 'desc' });
-            resetTxSortMark();
-            txButtonSortDate.classList.add('desc');
-            txButtonSortDate.dataset.dir = 'desc';
-        }
-    }
-
+    // export
     function exportAsCsv(mode) {
         if (wsession.get('txLen') <= 0) return;
 
@@ -1829,55 +1910,6 @@ function handleTransactions() {
         dialog.innerHTML = dialogTpl;
         dialog.showModal();
     });
-
-    // listen to tx update
-    txInputUpdated.addEventListener('change', (event) => {
-        let updated = parseInt(event.target.value, 10) === 1;
-        if (!updated) return;
-        txInputUpdated.value = 0;
-        listTransactions();
-    });
-    // listen to tx notify
-    txInputNotify.addEventListener('change', (event) => {
-        let notify = parseInt(event.target.value, 10) === 1;
-        if (!notify) return;
-        txInputNotify.value = 0; // reset
-        changeSection('section-transactions');
-    });
-
-    // tx detail
-    wsutil.liveEvent('.txlist-item', 'click', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        return showTransaction(event.target);
-    }, document.getElementById('transaction-lists'));
-
-    txButtonSortAmount.addEventListener('click', (event) => {
-        event.preventDefault();
-        let currentDir = event.target.dataset.dir;
-        let targetDir = (currentDir === 'desc' ? 'asc' : 'desc');
-        event.target.dataset.dir = targetDir;
-        resetTxSortMark();
-        event.target.classList.add(targetDir);
-        TXLIST_OBJ.sort('amount', {
-            order: targetDir,
-            sortFunction: sortAmount
-        });
-    });
-
-    txButtonSortDate.addEventListener('click', (event) => {
-        event.preventDefault();
-        let currentDir = event.target.dataset.dir;
-        let targetDir = (currentDir === 'desc' ? 'asc' : 'desc');
-        event.target.dataset.dir = targetDir;
-        resetTxSortMark();
-        event.target.classList.add(targetDir);
-        TXLIST_OBJ.sort('timestamp', {
-            order: targetDir
-        });
-    });
-
-    txButtonRefresh.addEventListener('click', listTransactions);
 }
 
 function handleNetworkChange() {
@@ -2244,6 +2276,15 @@ function fetchWait(url, options, timeout = 3000) {
 }
 
 function fetchNodeInfo() {
+    // disable node selection during update
+    walletOpenInputNode.options.length = 0;
+    let opt = document.createElement('option');
+    opt.text = "Updating node list, please wait...";
+    opt.value = "-";
+    opt.setAttribute('selected', true);
+    walletOpenInputNode.add(opt, null);
+    walletOpenInputNode.setAttribute('disabled', true);
+
     window.ELECTRON_ENABLE_SECURITY_WARNINGS = false;
     let aliveNodes = settings.get('pubnodes_checked', false);
     if (aliveNodes.length) {
@@ -2251,6 +2292,7 @@ function fetchNodeInfo() {
         return aliveNodes;
     }
 
+    // todo: also check block height
     let nodes = settings.get('pubnodes_data');
     let reqs = [];
     nodes.forEach(h => {
@@ -2275,14 +2317,15 @@ function fetchNodeInfo() {
         });
     });
 
-    async.parallelLimit(reqs, 12, function (error, results) {
+    async.parallelLimit(reqs, 8, function (error, results) {
         if (results) {
             let res = results.filter(val => val);
             if (res.length) {
                 settings.set('pubnodes_checked', res);
-                // test
                 initNodeSelection();
             }
+        } else {
+            initNodeSelection();
         }
     });
 }
@@ -2290,9 +2333,9 @@ function fetchNodeInfo() {
 // spawn event handlers
 document.addEventListener('DOMContentLoaded', () => {
     initHandlers();
+    fetchNodeInfo();
     showInitialPage();
     initKeyBindings();
-    fetchNodeInfo();
 }, false);
 
 ipcRenderer.on('cleanup', () => {
