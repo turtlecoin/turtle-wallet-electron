@@ -2026,7 +2026,7 @@ function handleSendTransfer() {
         }
 
         let total = 0;
-        let amount = sendInputAmount.value ? parseFloat(sendInputAmount.value.toFixed(2)) : 0;
+        let amount = sendInputAmount.value ? parseFloat(sendInputAmount.value) : 0;
         if (amount <= 0 || amount < config.mininumSend) {
             formMessageSet('send', 'error', `Sorry, minimum amount you can send is ${config.mininumSend}`);
             return;
