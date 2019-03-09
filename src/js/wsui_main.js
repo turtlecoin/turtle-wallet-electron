@@ -225,8 +225,7 @@ let jtfr = {
         "TRTL",
         "turtle-service",
         "CFG_MIN_FEE",
-        "CFG_MIN_SEND",
-        "CFG_ADDR_LENGTH"
+        "CFG_MIN_SEND"
     ],
     tReplace: [
         config.appName,
@@ -235,8 +234,7 @@ let jtfr = {
         config.assetTicker,
         config.walletServiceBinaryFilename,
         config.minimumFee,
-        config.mininumSend,
-        config.addressLength
+        config.mininumSend
     ]
 };
 
@@ -951,7 +949,7 @@ function handleAddressBook() {
 
     // disable payment id input for non standard adress
     function setAbPaymentIdState(addr) {
-        if (addr.length > CFG_ADDR_LENGTH) {
+        if (addr.length > config.addressLength) {
             addressBookInputPaymentId.value = '';
             addressBookInputPaymentId.setAttribute('disabled', true);
         } else {
@@ -1156,7 +1154,7 @@ function handleAddressBook() {
             }
         }
 
-        if (addressValue.length > CFG_ADDR_LENGTH) paymentIdValue.value = '';
+        if (addressValue.length > config.addressLength) paymentIdValue.value = '';
 
         let entryName = nameValue.trim();
         let entryAddr = addressValue.trim();
@@ -1974,9 +1972,9 @@ function handleSendTransfer() {
         if (maxsend) sendInputAmount.value = maxsend;
     });
 
-    sendInputFee.value = CFG_MIN_SEND;
+    sendInputFee.value = config.mininumSend;
     function setPaymentIdState(addr) {
-        if (addr.length > CFG_ADDR_LENGTH) {
+        if (addr.length > config.addressLength) {
             sendInputPaymentId.value = '';
             sendInputPaymentId.setAttribute('disabled', true);
         } else {
@@ -2018,7 +2016,7 @@ function handleSendTransfer() {
         }
 
         let paymentId = sendInputPaymentId.value ? sendInputPaymentId.value.trim() : '';
-        if (recipientAddress.length > CFG_ADDR_LENGTH) {
+        if (recipientAddress.length > config.addressLength) {
             paymentId = '';
         } else if (paymentId.length) {
             if (!wsutil.validatePaymentId(paymentId)) {
@@ -2709,7 +2707,7 @@ function initHandlers() {
                 return;
             }
             // only allow standard address
-            if (addr.length > CFG_ADDR_LENGTH) {
+            if (addr.length > config.addressLength) {
                 formMessageSet('gia', 'error', `Only standard ${config.assetName} address are supported`);
                 return;
             }
