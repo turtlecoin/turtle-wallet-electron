@@ -1,23 +1,23 @@
 var config = {};
 
 // self explanatory, your application name, descriptions, etc
-config.appName = 'WalletShell';
-config.appDescription = 'TurtleCoin Wallet';
-config.appSlogan = 'Slow and steady wins the race!';
-config.appId = 'lol.turtlecoin.walletshell';
-config.appGitRepo = 'https://github.com/turtlecoin/turtle-wallet-electron';
+config.appName = 'XWallet';
+config.appDescription = 'LightChain Wallet';
+config.appSlogan = 'A lightweight digital cryptonote currency.';
+config.appId = 'lightchain.xwallet';
+config.appGitRepo = 'https://github.com/lcxnetwork/XWallet-GUI';
 
 // default port number for your daemon (e.g. TurtleCoind)
-config.daemonDefaultRpcPort = 11898;
+config.daemonDefaultRpcPort = 10002;
 
 // wallet file created by this app will have this extension
-config.walletFileDefaultExt = 'twl';
+config.walletFileDefaultExt = 'wallet';
 
 // change this to match your wallet service executable filename
-config.walletServiceBinaryFilename = 'turtle-service';
+config.walletServiceBinaryFilename = 'lc-service';
 
 // version on the bundled service (turtle-service)
-config.walletServiceBinaryVersion = "v0.13.0";
+config.walletServiceBinaryVersion = "v0.2.0";
 
 // config file format supported by wallet service, possible values:
 // ini -->  for turtle service (or its forks) version <= v0.8.3
@@ -28,40 +28,40 @@ config.walletServiceConfigFormat = "json";
 config.walletServiceRpcPort = 8070;
 
 // block explorer url, the [[TX_HASH]] will be substituted w/ actual transaction hash
-config.blockExplorerUrl = 'https://explorer.turtlecoin.lol/transaction.html?hash=[[TX_HASH]]';
+config.blockExplorerUrl = 'https://explorer.lightchain.net/transaction.html?hash=[[TX_HASH]]';
 
 // default remote node to connect to, set this to a known reliable node for 'just works' user experience
-config.remoteNodeDefaultHost = 'turtlenode.co';
+config.remoteNodeDefaultHost = 'xmlc.ml';
 
 // remote node list update url, set to null if you don't have one
-config.remoteNodeListUpdateUrl = 'https://raw.githubusercontent.com/turtlecoin/turtlecoin-nodes-json/master/turtlecoin-nodes.json';
+config.remoteNodeListUpdateUrl = 'https://raw.githubusercontent.com/lcxnetwork/public-nodes-json/master/public-nodes.json';
 
 // fallback remote node list, in case fetching update failed, fill this with known to works remote nodes
 config.remoteNodeListFallback = [
-  'turtlenode.co:11898',
-  'nodes.hashvault.pro:11898',
-  'turtle.mine.nu:11898',
+  'xmlc.ml:10002',
+  'hashblaster.com:10002',
+  'explorer.lightchain.net:10002',
 ];
 
 // your currency name
-config.assetName = 'TurtleCoin';
+config.assetName = 'LightChain';
 // your currency ticker
-config.assetTicker = 'TRTL';
+config.assetTicker = 'LCX';
 // your currency address prefix, for address validation
-config.addressPrefix = 'TRTL';
+config.addressPrefix = 'X';
 // standard wallet address length, for address validation
-config.addressLength = 99;
+config.addressLength = 97;
 // integrated wallet address length, for address validation. Added length is length of payment ID encoded in base58.
-config.integratedAddressLength = config.addressLength + ((64 * 11) / 8);
+config.integratedAddressLength = 185;
 
 // minimum fee for sending transaction
-config.minimumFee = 0.1;
+config.minimumFee = 0.00000100;
 // minimum amount for sending transaction
-config.mininumSend = 0.1;
+config.mininumSend = 0.00000001;
 // default mixin/anonimity for transaction
 config.defaultMixin = 3;
 // to represent human readable value
-config.decimalPlaces = 2;
+config.decimalPlaces = 8;
 // to convert from atomic unit
 config.decimalDivisor = 10 ** config.decimalPlaces;
 
@@ -73,8 +73,8 @@ config.addressBookObfuscationKey = '79009fb00ca1b7130832a42de45142cf6c4b7f333fe6
 // initial/sample entries to fill new address book
 config.addressBookSampleEntries = [
   {
-    name: 'WalletShell Donation',
-    address: 'TRTLv1A26ngXApin33p1JsSE9Yf6REj97Xruz15D4JtSg1wuqYTmsPj5Geu2kHtBzD8TCsfd5dbdYRsrhNXMGyvtJ61AoYqLXVS',
+    name: 'XWallet Donation',
+    address: 'Xwmmuem45YVbFmN29GNDxie1foHypTioBUivW4fEKo3BSu4LPfPtjQY8zpnp1GxXx2PZL1Q4idD6gNDVuvPaHR3B2TpmdVoba',
     paymentId: '',
   }
 ];

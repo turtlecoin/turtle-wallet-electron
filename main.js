@@ -35,7 +35,7 @@ const DEFAULT_SETTINGS = {
     node_address: DEFAULT_REMOTE_NODE,
     pubnodes_last_updated: 946697799000,
     pubnodes_data: config.remoteNodeListFallback,
-    pubnodes_custom: ['127.0.0.1:11898'],
+    pubnodes_custom: ['127.0.0.1:10002'],
     pubnodes_exclude_offline: false,
     tray_minimize: false,
     tray_close: false,

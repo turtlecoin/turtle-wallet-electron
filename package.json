@@ -1,18 +1,18 @@
 {
-  "name": "walletshell",
-  "productName": "WalletShell",
-  "description": "TurtleCoin GUI Wallet",
-  "version": "v0.3.11",
-  "homepage": "https://github.com/turtlecoin/turtle-wallet-electron",
-  "repository": "https://github.com/turtlecoin/turtle-wallet-electron",
+  "name": "xwalletgui",
+  "productName": "XWallet-GUI",
+  "description": "LightChain GUI Wallet",
+  "version": "v0.4.0",
+  "homepage": "https://github.com/lcxnetwork/XWallet-GUI",
+  "repository": "https://github.com/lcxnetwork/XWallet-GUI",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "debug": "electron . debug",
     "dev": "electron . dev",
-    "dist-win": "./node_modules/.bin/electron-builder --x64 --win -c.extraResources=./bin/win/turtle-service.exe",
-    "dist-lin": "./node_modules/.bin/electron-builder --x64 --linux -c.extraResources=./bin/lin/turtle-service",
-    "dist-mac": "./node_modules/.bin/electron-builder --x64 --mac -c.extraResources=./bin/osx/turtle-service"
+    "dist-win": "./node_modules/.bin/electron-builder --x64 --win -c.extraResources=./bin/win/lc-service.exe",
+    "dist-lin": "./node_modules/.bin/electron-builder --x64 --linux -c.extraResources=./bin/lin/lc-service",
+    "dist-mac": "./node_modules/.bin/electron-builder --x64 --mac -c.extraResources=./bin/osx/lc-service"
   },
   "keywords": [],
   "author": "Rixombea, Macroshock, TurtleCoin Developers",
