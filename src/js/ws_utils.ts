@@ -30,7 +30,7 @@ export class Utils {
         el.dispatchEvent(e);
     };
 
-    public liveEvent(selector, event, callback, context) {
+    public liveEvent(selector: string, event: string, callback: any, context?: any) {
         this.addEvent(context || document, event, function (e) {
             var qs = (context || document).querySelectorAll(selector);
             if (qs) {
@@ -108,7 +108,7 @@ export class Utils {
     };
     
     /*****  MISC util ****/
-    public arrShuffle(arr, method) {
+    public arrShuffle(arr: any, method?: number) {
         method = method || 0;
         if (method === 1) {
             var cidx = arr.length, tmp, ridx;
@@ -276,7 +276,7 @@ export class Utils {
         return `${rawFilename}.${walletExt}`;
     };
     
-    public validateWalletPath(fullpath, defaultDir, isExisting) {
+    public validateWalletPath(fullpath: string, defaultDir: string, isExisting?: boolean) {
         return new Promise((resolve, reject) => {
             fullpath = fullpath || '';
             isExisting = isExisting || false;
