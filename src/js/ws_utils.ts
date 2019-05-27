@@ -13,6 +13,16 @@ const PAYMENT_ID_REGEX = new RegExp(/^([aA-zZ0-9]{64})$/);
 const SECRET_KEY_REGEX = new RegExp(/^[aA-zZ0-9]{64}$/);
 const MNEMONIC_SEED_REGEX = new RegExp(/^[aA-zZ]+(?!.*  )[a-zA-Z0-9 ]*$/);
 
+interface Toast {
+    TOASTBD: any,
+    TOASTT: any,
+}
+
+let toast = {
+    TOASTBD: null,
+    TOASTT: null,
+}
+
 export class Utils {
     public triggerEvent(el, type) {
         var e = document.createEvent('HTMLEvents');
@@ -59,40 +69,40 @@ export class Utils {
         parentEl.parentNode.replaceChild(newEl, parentEl);
     };
     
-    public showToast(msg, duration, elId) {
+    public showToast(msg: string, duration?: number, elId?: any) {
         duration = duration || 3500;
         elId = elId || 'belekok';    
         let blekok = document.getElementById(elId);
     
         if (!msg.length) {
-            try { clearTimeout(window.TOASTT); } catch (_) { }
+            try { clearTimeout(toast.TOASTT); } catch (_) { }
             blekok.classList.add('off');
             return;
         }
     
         let openedDialog = document.querySelector('dialog[open]');
     
-        if (typeof window.TOASTT !== 'undefined' && window.TOASTT !== null) {
+        if (typeof toast.TOASTT !== 'undefined' && toast.TOASTT !== null) {
             try {
                 if (openedDialog) {
-                    clearTimeout(window.TOASTBD);
+                    clearTimeout(toast.TOASTBD);
                     openedDialog.classList.remove('dialog-alerted');
                 }
-                clearTimeout(window.TOASTT);
+                clearTimeout(toast.TOASTT);
                 blekok.classList.add('off');
             } catch (e) { }
         }
     
         if (openedDialog) {
             openedDialog.classList.add('dialog-alerted');
-            window.TOASTBD = setTimeout(() => {
+            toast.TOASTBD = setTimeout(() => {
                 openedDialog.classList.remove('dialog-alerted');
             }, duration + 100);
         }
     
         blekok.innerText = msg;
         blekok.classList.remove('off');
-        window.TOASTT = setTimeout(function () {
+        toast.TOASTT = setTimeout(function () {
             blekok.classList.add('off');
         }, duration);
     };
@@ -212,7 +222,7 @@ export class Utils {
     public amountForImmortal(amount) {
         if (!config.decimalDivisor) return amount;
         let da = this.decimalAdjust("round", parseFloat(amount), -(config.decimalPlaces));
-        return parseInt(da * config.decimalDivisor);
+        return (da * config.decimalDivisor).toString();
     };
     
     public isFileExist(filePath) {
