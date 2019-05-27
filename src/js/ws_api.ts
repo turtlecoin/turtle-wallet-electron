@@ -30,7 +30,7 @@ export class WalletShellApi {
         log.debug(this.service_password)
     }
 
-    private _sendRequest(method, params, timeout) {
+    private _sendRequest(method: string, params?: any, timeout?: number) {
         return new Promise((resolve, reject) => {
             if (method.length === 0) return reject(new Error('Invalid Method'));
             params = params || {};
@@ -84,7 +84,7 @@ export class WalletShellApi {
             });
         });
     }
-    public getBalance(params) {
+    public getBalance(params: any) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.address = params.address || '';
@@ -125,7 +125,7 @@ export class WalletShellApi {
             });
         });
     }
-    public getSpendKeys(params) {
+    public getSpendKeys(params: any) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.address = params.address || '';
@@ -141,7 +141,7 @@ export class WalletShellApi {
             });
         });
     }
-    public getMnemonicSeed(params) {
+    public getMnemonicSeed(params: any) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.address = params.address || '';
@@ -157,7 +157,7 @@ export class WalletShellApi {
             });
         });
     }
-    public getBackupKeys(params) {
+    public getBackupKeys(params: any) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.address = params.address || '';
@@ -165,19 +165,19 @@ export class WalletShellApi {
             var req_params = {
                 address: params.address
             };
-            var backupKeys = {};
-            this.getViewKey().then((vkres) => {
+            var backupKeys: any = {};
+            this.getViewKey().then((vkres: any) => {
                 backupKeys.viewSecretKey = vkres.viewSecretKey;
                 return backupKeys;
             }).then(() => {
-                this.getSpendKeys(req_params).then((vsres) => {
+                this.getSpendKeys(req_params).then((vsres: any) => {
                     backupKeys.spendSecretKey = vsres.spendSecretKey;
                     return backupKeys;
                 }).catch((err) => {
                     return reject(err);
                 });
             }).then(() => {
-                this.getMnemonicSeed(req_params).then((mres) => {
+                this.getMnemonicSeed(req_params).then((mres: any) => {
                     backupKeys.mnemonicSeed = mres.mnemonicSeed;
                     return resolve(backupKeys);
                 }).catch((_err) => { /* jshint ignore:line */
@@ -189,7 +189,7 @@ export class WalletShellApi {
             });
         });
     }
-    public getTransactions(params) {
+    public getTransactions(params: any) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.firstBlockIndex = params.firstBlockIndex || 1;
@@ -206,7 +206,7 @@ export class WalletShellApi {
         });
     }
     // send single transaction
-    public sendTransaction(params) {
+    public sendTransaction(params: any) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.amount = params.amount || false;
@@ -218,7 +218,7 @@ export class WalletShellApi {
             if (!params.amount) return reject(new Error('Missing transaction amount parameter'));
             if (parseFloat(params.fee) < 0.1) return reject(new Error('Minimum fee is 0.1 TRTL'));
             //[{address: "TRTLxxxx...", amount: 100}];
-            var req_params = {
+            var req_params: any = {
                 transfers: [{ address: params.address, amount: params.amount }],
                 fee: params.fee
             };
@@ -231,7 +231,7 @@ export class WalletShellApi {
             });
         });
     }
-    public reset(params) {
+    public reset(params: any) {
         return new Promise((resolve, reject) => {
             params = params || {};
             params.scanHeight = params.scanHeight || 0;
@@ -246,7 +246,7 @@ export class WalletShellApi {
             });
         });
     }
-    public estimateFusion(params) {
+    public estimateFusion(params: any) {
         return new Promise((resolve, reject) => {
             params = params || {};
             if (!params.threshold) return reject(new Error('Missing threshold parameter'));
@@ -257,7 +257,7 @@ export class WalletShellApi {
             });
         });
     }
-    public sendFusionTransaction(params) {
+    public sendFusionTransaction(params: any) {
         return new Promise((resolve, reject) => {
             params = params || {};
             if (!params.threshold) return reject(new Error('Missing threshold parameter'));
@@ -269,7 +269,7 @@ export class WalletShellApi {
             });
         });
     }
-    public createIntegratedAddress(params) {
+    public createIntegratedAddress(params: any) {
         return new Promise((resolve, reject) => {
             params = params || {};
             if (!params.address || !params.paymentId) {

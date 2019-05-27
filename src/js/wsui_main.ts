@@ -385,7 +385,7 @@ function switchTab() {
 }
 
 // section switcher
-function changeSection(sectionId, targetRedir) {
+function changeSection(sectionId: any, targetRedir?: any) {
     wsutil.showToast('');
 
     if (WALLET_OPEN_IN_PROGRESS) {
@@ -478,7 +478,7 @@ function changeSection(sectionId, targetRedir) {
     }
 }
 
-function initNodeSelection(nodeAddr) {
+function initNodeSelection(nodeAddr?: string) {
     let forceNew = nodeAddr ? true : false;
     if (forceNew) settings.set('node_address', nodeAddr);
     walletOpenInputNode.dataset.updating = 0;
@@ -603,7 +603,7 @@ function initNodeSelection(nodeAddr) {
 }
 
 // initial settings value or updater
-function initSettingVal(values) {
+function initSettingVal(values?: any) {
     values = values || null;
     if (values) {
         // save new settings
@@ -655,7 +655,7 @@ function formMessageSet(target, status, txt) {
 }
 
 // utility: blank tx filler
-function setTxFiller(show) {
+function setTxFiller(show?: boolean) {
     show = show || false;
     let fillerRow = document.getElementById('txfiller');
     let txRow = document.getElementById('transaction-lists');
@@ -726,7 +726,7 @@ function handleSettings() {
 function initAddressCompletion(data) {
     var addresses = [];
     if (data) {
-        addresses = Object.entries(data).map(([k, v]) => `${v.name}###${v.address}###${v.paymentId ? v.paymentId : ''}`);
+        addresses = Object.entries(data).map(([k, v]: any) => `${v.name}###${v.address}###${v.paymentId ? v.paymentId : ''}`);
     }
 
     try {
@@ -761,7 +761,7 @@ function initAddressCompletion(data) {
         }
     });
 }
-function updateAddressBookSelector(selected) {
+function updateAddressBookSelector(selected?: any) {
     selected = selected || null;
     if (!selected) {
         let ab = wsession.get('addressBook');
@@ -854,7 +854,7 @@ function handleAddressBook() {
                 { headerName: "Payment ID", field: "value.paymentId", sortingOrder: ['asc', 'desc'] }
             ];
 
-            let gridOptions = {
+            let gridOptions: any = {
                 columnDefs: columnDefs,
                 rowData: data,
                 pagination: false,
@@ -1302,7 +1302,7 @@ function handleAddressBook() {
         }
     });
 
-    function loadAddressBook(params) {
+    function loadAddressBook(params?: any) {
         params = params || false;
         wsession.set('addressBookErr', false);
         if (params) {
@@ -1316,7 +1316,7 @@ function handleAddressBook() {
         }
 
         let currentAddressBook = wsession.get('addressBook');
-        let abdata = [];
+        let abdata: any = [];
         if (!currentAddressBook) {
             // new session, load from file
             try {
@@ -1750,7 +1750,7 @@ function handleWalletCreate() {
         let passwordValue = walletCreateInputPassword.value ? walletCreateInputPassword.value.trim() : '';
 
         // validate path
-        wsutil.validateWalletPath(filePathValue, DEFAULT_WALLET_PATH).then((finalPath) => {
+        wsutil.validateWalletPath(filePathValue, DEFAULT_WALLET_PATH).then((finalPath: any) => {
 
             // validate password
             if (!passwordValue.length) {
@@ -1830,7 +1830,7 @@ function handleWalletImportKeys() {
                 return;
             }
 
-            settings.set('recentWalletDir', path.dirname(finalPath));
+            settings.set('recentWalletDir', path.dirname(finalPath.toString()));
 
             // user already confirm to overwrite
             if (wsutil.isRegularFileAndWritable(finalPath)) {
@@ -2546,6 +2546,13 @@ function initHandlers() {
     kswitch.addEventListener('click', showKeyBindings);
     iswitch.addEventListener('click', showAbout);
 
+    interface DialogOpts {
+        defaultPath: string,
+        title: string,
+        buttonLabel: string,
+        properties: any,
+    }
+
     function handleBrowseButton(args) {
         if (!args) return;
         let tbtn = document.getElementById(args.targetButton);
@@ -2555,8 +2562,11 @@ function initHandlers() {
         let targetName = (args.targetName ? args.targetName : 'file');
         let targetInput = args.targetInput;
         let recentDir = settings.get('recentWalletDir', remote.app.getPath('documents'));
-        let dialogOpts = {
-            defaultPath: recentDir
+        let dialogOpts: DialogOpts = {
+            defaultPath: recentDir,
+            title: `Initializing, please wait...`,
+            buttonLabel: '',
+            properties: null,
         };
 
         if (dialogType === 'saveFile') {
@@ -2885,10 +2895,10 @@ function fetchFromRaw() {
     
 }
 
-function fetchNodeInfo(force) {
+function fetchNodeInfo(force?: boolean) {
     force = force || false;
 
-    function fetchWait(url, timeout) {
+    function fetchWait(url: string, timeout?: number) {
         let controller = new AbortController();
         let signal = controller.signal;
         timeout = timeout || 6800;

@@ -20,7 +20,7 @@ let WFCLEAR_TICK = 0;
 let FUSION_CHECK = 0;
 let TX_INITIALIZED = false;
 
-function setWinTitle(title) {
+function setWinTitle(title?: string) {
     const defaultTitle = wsession.get('defaultTitle');
     brwin.setTitle((title ? `${defaultTitle} ${title}` : defaultTitle));
 }
@@ -234,7 +234,7 @@ function updateBalance(data) {
         inputSendAmountField.setAttribute('max', '0.00');
         inputSendAmountField.setAttribute('disabled', 'disabled');
         maxSendFormHelp.innerHTML = "You don't have any funds to be sent.";
-        sendMaxAmount.dataset.maxsend = 0;
+        sendMaxAmount.dataset.maxsend = '0';
         sendMaxAmount.classList.add('hidden');
         wsession.set('walletUnlockedBalance', 0);
         wsession.set('walletLockedBalance', 0);
@@ -284,7 +284,7 @@ function updateTransactions(result) {
 
     let txListNew = [];
 
-    Array.from(blockItems).forEach((block) => {
+    Array.from(blockItems).forEach((block: any) => {
         block.transactions.map((tx) => {
             if (tx.amount !== 0 && !wsutil.objInArray(txlistExisting, tx, 'transactionHash')) {
                 tx.amount = wsutil.amountForMortal(tx.amount);
@@ -315,10 +315,10 @@ function updateTransactions(result) {
     wsession.set('txLen', txList.length);
     wsession.set('txNew', txListNew);
 
-    let currentDate = new Date();
-    currentDate = `${currentDate.getUTCFullYear()}-${currentDate.getUTCMonth() + 1}-${currentDate.getUTCDate()}`;
-    let lastTxDate = new Date(newLastTimestamp * 1000);
-    lastTxDate = `${lastTxDate.getUTCFullYear()}-${lastTxDate.getUTCMonth() + 1}-${lastTxDate.getUTCDate()}`;
+    let rawCurrentDate: Date = new Date();
+    let currentDate: string = `${rawCurrentDate.getUTCFullYear()}-${rawCurrentDate.getUTCMonth() + 1}-${rawCurrentDate.getUTCDate()}`;
+    let rawLastTxDate = new Date(newLastTimestamp * 1000);
+    let lastTxDate = `${rawLastTxDate.getUTCFullYear()}-${rawLastTxDate.getUTCMonth() + 1}-${rawLastTxDate.getUTCDate()}`;
 
     // amount to check
     setTimeout(triggerTxRefresh, (TX_INITIALIZED ? 100 : 1000));

@@ -11,20 +11,40 @@ log.transports.file.level = 'debug';
 const SYNC_INTERVAL = 4 * 1000;
 const SYNC_FAILED_MAX = 24;
 
+interface WorkerStatus { 
+    CONNECTED: boolean,
+    PAUSED: boolean,
+    TX_CHECK_INITIALIZED: boolean,
+    FAILED_COUNT: number,
+    SAVE_TICK: number,
+    STATE_CONNECTED: boolean,
+}
+
+interface WalletStatus {
+    LAST_BLOCK_COUNT: number,
+    LAST_KNOWN_BLOCK_COUNT: number,
+    TX_LAST_INDEX: number,
+    TX_LAST_COUNT: number,
+    TX_CHECK_SKIPPED_COUNT: number,
+    TX_SKIPPED_COUNT: number,
+}
+
 let serviceConfig = null; // { service_host: '127.0.0.1', service_port: '8070', service_password: 'xxx'};
-let workerStatus = {
+let workerStatus: WorkerStatus = {
     CONNECTED: true,
     PAUSED: false,
     TX_CHECK_INITIALIZED: false,
     FAILED_COUNT: 0,
-    SAVE_TICK: 0
+    SAVE_TICK: 0,
+    STATE_CONNECTED: false,
 };
-let walletStatus = {
+let walletStatus: WalletStatus = {
     LAST_BLOCK_COUNT: 1,
     LAST_KNOWN_BLOCK_COUNT: 1,
     TX_LAST_INDEX: 1,
     TX_LAST_COUNT: 0,
     TX_CHECK_SKIPPED_COUNT: 0,
+    TX_SKIPPED_COUNT: 0,
 };
 let wsapi = null;
 let taskWorker = null;
@@ -92,7 +112,7 @@ function checkBlockUpdate() {
         if (syncPercent <= 0 || syncPercent >= 99.995) {
             syncPercent = 100;
         } else {
-            syncPercent = syncPercent.toFixed(2);
+            syncPercent = parseInt(syncPercent.toFixed(2));
         }
 
         blockStatus.displayBlockCount = dispBlockCount;
