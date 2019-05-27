@@ -13,7 +13,7 @@ import async from 'async';
 import AgGrid from 'ag-grid-community';
 
 import { Utils } from './ws_utils';
-const WalletShellSession = require('./ws_session');
+import { WalletShellSession } from './ws_session';
 const WalletShellManager = require('./ws_manager');
 import { syncStatus } from './ws_constants';
 

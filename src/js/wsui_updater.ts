@@ -1,7 +1,7 @@
 import { webFrame, remote } from 'electron';
 import Store from 'electron-store';
 import { Utils } from './ws_utils';
-const WalletShellSession = require('./ws_session');
+import { WalletShellSession } from './ws_session';
 import { config } from './ws_config';
 import { syncStatus } from './ws_constants';
 const wsutil = new Utils();
