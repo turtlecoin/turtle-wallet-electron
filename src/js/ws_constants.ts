@@ -1,4 +1,4 @@
-interface syncTypes {
+interface SyncTypes {
     IDLE: number,
     RESET: number,
     NODE_ERROR: number,
@@ -6,7 +6,7 @@ interface syncTypes {
     NET_OFFLINE: number,
 }
 
-export const syncStatus: syncTypes = {
+export const syncStatus: SyncTypes = {
     IDLE: -100,
     RESET: -300,
     NODE_ERROR: -200,

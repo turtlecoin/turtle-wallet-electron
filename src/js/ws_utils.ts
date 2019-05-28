@@ -13,11 +13,6 @@ const PAYMENT_ID_REGEX = new RegExp(/^([aA-zZ0-9]{64})$/);
 const SECRET_KEY_REGEX = new RegExp(/^[aA-zZ0-9]{64}$/);
 const MNEMONIC_SEED_REGEX = new RegExp(/^[aA-zZ]+(?!.*  )[a-zA-Z0-9 ]*$/);
 
-interface Toast {
-    TOASTBD: any,
-    TOASTT: any,
-}
-
 let toast = {
     TOASTBD: null,
     TOASTT: null,

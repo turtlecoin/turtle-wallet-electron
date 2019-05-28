@@ -16,6 +16,7 @@ import { Utils } from './ws_utils';
 import { WalletShellSession } from './ws_session';
 const WalletShellManager = require('./ws_manager');
 import { syncStatus } from './ws_constants';
+import { WalletShellAddressBook } from './ws_addressbook'
 
 const wsutil = new Utils();
 const wsmanager = new WalletShellManager();
@@ -23,11 +24,13 @@ const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletCon
 
 const wsession = new WalletShellSession(sessConfig);
 const settings = new Store({ name: 'Settings' });
-const WalletShellAddressbook = require('./ws_addressbook');
 
 const ADDRESS_BOOK_DIR = remote.app.getPath('userData');
 const ADDRESS_BOOK_DEFAULT_PATH = path.join(ADDRESS_BOOK_DIR, '/SharedAddressBook.json');
-let addressBook = new WalletShellAddressbook(ADDRESS_BOOK_DEFAULT_PATH);
+
+const addressBookConfig = {path: ADDRESS_BOOK_DEFAULT_PATH}
+
+let addressBook = new WalletShellAddressBook(addressBookConfig);
 
 const win = remote.getCurrentWindow();
 const Menu = remote.Menu;
@@ -1309,9 +1312,10 @@ function handleAddressBook() {
             // new address book, reset ab object + session
             wsession.set('addressBook', null);
             if (params.name === 'default') {
-                addressBook = new WalletShellAddressbook(ADDRESS_BOOK_DEFAULT_PATH);
+                addressBook = new WalletShellAddressBook(addressBookConfig);
             } else {
-                addressBook = new WalletShellAddressbook(params.path, params.name, params.pass);
+                const loadAddressBookConfig = {path: params.path, name: params.name, pass: params.pass}
+                addressBook = new WalletShellAddressBook(loadAddressBookConfig);
             }
         }
 

@@ -358,7 +358,7 @@ function showFeeWarning(fee) {
     dialog.classList.add('dialog-warning');
     let htmlStr = `
         <h5>Fee Info</h5>
-        <p>You are connected to a public node (${settings.get('node_address')}) that charges a fee to send transactions.<p>
+        <p>You are connected to a public node (${settings.get('node_npm s')}) that charges a fee to send transactions.<p>
         <p>The fee for sending transactions is: <strong>${fee.toFixed(config.decimalPlaces)} ${config.assetTicker} </strong>.<br>
             If you don't want to pay the node fee, please close your wallet, reopen and choose different public node (or run your own node).
         </p>
