@@ -10,7 +10,7 @@ import Store from 'electron-store';
 import Mousetrap from 'mousetrap';
 import autoComplete from 'js-autocomplete';
 import async from 'async';
-import AgGrid from 'ag-grid-community';
+import * as AgGrid from 'ag-grid-community';
 
 import { Utils } from './ws_utils';
 import { WalletShellSession } from './ws_session';
