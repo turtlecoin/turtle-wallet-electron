@@ -1,6 +1,5 @@
 import * as log from 'electron-log';
 import { syncStatus } from './ws_constants';
-
 import { WalletShellApi } from './ws_api';
 
 let DEBUG = false;
@@ -50,7 +49,7 @@ let wsapi = null;
 let taskWorker = null;
 
 function logDebug(msg) {
-    if (!DEBUG) return;
+    // if (!DEBUG) return;
     log.debug(`[syncworker] ${msg}`);
 }
 
