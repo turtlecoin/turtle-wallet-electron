@@ -105,7 +105,6 @@ export class WalletShellSession {
     
         return JSON.parse(sessionStorage.getItem(this.sessKey))[key];
     };
-
     getDefault(key) {
         if (!key) {
             return this.sessDefault;

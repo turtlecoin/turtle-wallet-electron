@@ -1,4 +1,4 @@
-import GCM from 'node-crypto-gcm';
+import { GCM } from 'node-crypto-gcm';
 import fs from 'fs';
 import { config } from './ws_config';
 import { Utils } from './ws_utils';
