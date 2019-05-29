@@ -20,8 +20,6 @@ const settings = new Store({ name: 'Settings' });
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
 const wsession = new WalletShellSession(sessConfig);
 const uiupdater = new UpdateUiState();
-// const wsapi = new WalletShellApi(settings);
-
 
 const SERVICE_LOG_DEBUG = wsession.get('debug');
 const SERVICE_LOG_LEVEL_DEFAULT = 0;
@@ -807,7 +805,7 @@ export class WalletShellManager {
         log.debug('running optimizeWallet');
         return new Promise((resolve, reject) => {
             wsm.fusionTxHash = [];
-            wsm._fusionGetMinThreshold().then((res) => {
+            wsm._fusionGetMinThreshold().then((res: any) => {
                 if (res <= 0) {
                     wsm.notifyUpdate({
                         type: 'fusionTxCompleted',
