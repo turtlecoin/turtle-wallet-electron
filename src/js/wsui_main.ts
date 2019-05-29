@@ -14,7 +14,7 @@ import AgGrid from 'ag-grid-community';
 
 import { Utils } from './ws_utils';
 import { WalletShellSession } from './ws_session';
-const WalletShellManager = require('./ws_manager');
+import { WalletShellManager } from './ws_manager';
 import { syncStatus } from './ws_constants';
 import { WalletShellAddressBook } from './ws_addressbook'
 

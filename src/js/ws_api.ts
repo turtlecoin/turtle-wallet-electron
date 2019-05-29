@@ -2,7 +2,7 @@ import request from 'request-promise-native';
 import { config } from '../../src/js/ws_config';
 import * as log from 'electron-log';
 
-interface WalletShellSettings {
+export interface WalletShellSettings {
     service_host: string;
     service_port: string;
     service_password: string;
@@ -68,7 +68,7 @@ export class WalletShellApi {
     // only get single addres only, no multi address support for this wallet, yet
     public getAddress() {
         return new Promise((resolve, reject) => {
-            this._sendRequest('getAddresses').then((result) => {
+            this._sendRequest('getAddresses').then((result: any) => {
                 return resolve(result.addresses[0]);
             }).catch((err) => {
                 return reject(err);

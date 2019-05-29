@@ -93,7 +93,7 @@ export class WalletShellSession {
         /* jshint ignore:end */
     }
 
-    get(key) {
+    get(key?: any) {
         key = key || false;
         if (!key) {
             return JSON.parse(sessionStorage.getItem(this.sessKey)) || this.sessDefault;
@@ -122,7 +122,7 @@ export class WalletShellSession {
         return sessionStorage.setItem(this.sessKey, JSON.stringify(sessData));
     };
 
-    reset(key) {
+    reset(key?: any) {
         if (key) {
             if (!this.sessDefault.hasOwnProperty(key)) {
                 throw new Error('Invalid session key');
