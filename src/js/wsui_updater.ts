@@ -220,6 +220,10 @@ export class UpdateUiState {
         wsutil.showToast('Optimization completed. You may need to repeat the process until your wallet is fully optimized.', 5000);
     }
 
+    private formatLikeCurrency(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
     public updateBalance(data) {
         const balanceAvailableField = document.querySelector('#balance-available > span');
         const balanceLockedField = document.querySelector('#balance-locked > span');
@@ -230,13 +234,13 @@ export class UpdateUiState {
         if (!data) return;
         let availableBalance = parseFloat(data.availableBalance) || 0;
 
-        let bUnlocked = wsutil.amountForMortal(availableBalance);
-        let bLocked = wsutil.amountForMortal(data.lockedAmount);
-        let fees = (wsession.get('nodeFee') + config.minimumFee);
+        let bUnlocked = this.formatLikeCurrency(wsutil.amountForMortal(availableBalance));
+        let bLocked = this.formatLikeCurrency(wsutil.amountForMortal(data.lockedAmount));
+        let fees = (wsession.get('nodeFee') + config.minimumFee).toFixed(config.decimalPlaces);
         let maxSendRaw = (bUnlocked - fees);
 
         if (maxSendRaw <= 0) {
-            inputSendAmountField.value = 0;
+            // inputSendAmountField.value = 0;
             inputSendAmountField.setAttribute('max', '0.00');
             inputSendAmountField.setAttribute('disabled', 'disabled');
             maxSendFormHelp.innerHTML = "You don't have any funds to be sent.";
@@ -294,11 +298,12 @@ export class UpdateUiState {
             block.transactions.map((tx) => {
                 if (tx.amount !== 0 && !wsutil.objInArray(txlistExisting, tx, 'transactionHash')) {
                     tx.amount = wsutil.amountForMortal(tx.amount);
+                    tx.prettyAmount = wsutil.amountForMortal(tx.amount);
                     tx.timeStr = new Date(tx.timestamp * 1000).toUTCString();
                     tx.fee = wsutil.amountForMortal(tx.fee);
                     tx.paymentId = tx.paymentId.length ? tx.paymentId : '-';
                     tx.txType = (tx.amount > 0 ? 'in' : 'out');
-                    tx.rawAmount = parseInt(tx.amount, 10);
+                    tx.rawAmount = parseInt(tx.amount);
                     tx.rawFee = tx.fee;
                     tx.rawPaymentId = tx.paymentId;
                     tx.rawHash = tx.transactionHash;

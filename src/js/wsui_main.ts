@@ -806,6 +806,10 @@ function updateAddressBookSelector(selected?: any) {
     addressBookSelector.value = selected;
 }
 
+function formatLikeCurrency(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 function handleAddressBook() {
     function migrateOldFormat(newBook) {
         let oldAddressBook = path.join(remote.app.getPath('userData'), 'AddressBook.json');
@@ -1988,6 +1992,8 @@ function handleWalletExport() {
         }
     });
 }
+
+
 
 function handleSendTransfer() {
     sendMaxAmount.addEventListener('click', (event) => {

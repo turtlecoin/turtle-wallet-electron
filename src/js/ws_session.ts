@@ -146,3 +146,4 @@ export class WalletShellSession {
         return sessionStorage.removeItem(this.sessKey);
     }
 };
+
