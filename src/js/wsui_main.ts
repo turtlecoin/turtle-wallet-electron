@@ -2693,7 +2693,7 @@ function initHandlers() {
             el.addEventListener('keyup', handleFormEnter.bind(this, el));
         }
         wsutil.liveEvent('dialog input:not(.noenter)', 'keyup', (e) => {
-            let key = this.event.key;
+            let key = event.key;
             try { clearTimeout(window.enterHandler); } catch (_e) { }
             window.enterHandler = setTimeout(() => {
                 if (key === 'Enter') {
