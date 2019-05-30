@@ -49,7 +49,7 @@ let wsapi = null;
 let taskWorker = null;
 
 function logDebug(msg) {
-    if (DEBUG === false) return;
+    // if (DEBUG === false) return;
     log.debug(`[syncworker] ${msg}`);
 }
 

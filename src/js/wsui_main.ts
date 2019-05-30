@@ -806,9 +806,7 @@ function updateAddressBookSelector(selected?: any) {
     addressBookSelector.value = selected;
 }
 
-function formatLikeCurrency(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
+
 
 function handleAddressBook() {
     function migrateOldFormat(newBook) {

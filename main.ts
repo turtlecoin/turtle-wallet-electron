@@ -108,6 +108,7 @@ function createWindow() {
         webPreferences: {
             nativeWindowOpen: true,
             nodeIntegrationInWorker: true,
+            nodeIntegration: true,
         },
     };
 
