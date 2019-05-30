@@ -1,5 +1,5 @@
 import Store from 'electron-store';
-import { config } from '../../src/js/ws_config';
+import { config } from './ws_config';
 
 const settings: Store = new Store({ name: 'Settings' });
 const WS_VERSION: any = settings.get('version', 'unknown');

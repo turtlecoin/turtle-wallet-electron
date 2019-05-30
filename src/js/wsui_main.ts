@@ -1,7 +1,7 @@
 /*jshint bitwise: false*/
 /* global AbortController */
 import { clipboard, remote, ipcRenderer, shell } from 'electron';
-import { config } from '../../src/js/ws_config';
+import { config } from './ws_config';
 import os from 'os';
 import net from 'net';
 import path from 'path';
@@ -11,6 +11,7 @@ import Mousetrap from 'mousetrap';
 import autoComplete from 'js-autocomplete';
 import async from 'async';
 import * as AgGrid from 'ag-grid-community';
+import * as log from 'electron-log';
 
 import { Utils } from './ws_utils';
 import { WalletShellSession } from './ws_session';
@@ -21,6 +22,10 @@ import { WalletShellAddressBook } from './ws_addressbook'
 const wsutil = new Utils();
 const wsmanager = new WalletShellManager();
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
+
+log.debug(sessConfig);
+
+
 
 const wsession = new WalletShellSession(sessConfig);
 const settings = new Store({ name: 'Settings' });
@@ -2597,7 +2602,7 @@ function initHandlers() {
 
     function handleFormEnter(el) {
         try { clearTimeout(window.enterHandler); } catch (_e) { }
-        let key = this.event.key;
+        let key = event.key;
         window.enterHandler = setTimeout(() => {
             if (key === 'Enter') {
                 let section = el.closest('.section');

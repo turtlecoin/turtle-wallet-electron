@@ -3,7 +3,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { nativeImage } from 'electron';
 import qr from 'qr-image';
-import { config } from '../../src/js/ws_config';
+import { config } from './ws_config';
 import fnv from 'fnv-plus';
 import GCM from 'node-crypto-gcm';
 

@@ -7,7 +7,7 @@ import childProcess from 'child_process';
 import * as log from 'electron-log';
 import Store from 'electron-store';
 
-import { config } from '../../src/js/ws_config';
+import { config } from './ws_config';
 import { WalletShellSession } from './ws_session';
 import { WalletShellApi, WalletShellSettings } from './ws_api';
 import  { UpdateUiState } from './wsui_updater';
@@ -18,6 +18,7 @@ import { syncStatus } from './ws_constants';
 const wsutil = new Utils();
 const settings = new Store({ name: 'Settings' });
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
+log.debug(sessConfig);
 const wsession = new WalletShellSession(sessConfig);
 const uiupdater = new UpdateUiState();
 

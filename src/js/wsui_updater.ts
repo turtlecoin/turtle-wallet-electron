@@ -4,10 +4,14 @@ import { Utils } from './ws_utils';
 import { WalletShellSession } from './ws_session';
 import { config } from './ws_config';
 import { syncStatus } from './ws_constants';
+import * as log from 'electron-log';
+
 const wsutil = new Utils();
 const brwin = remote.getCurrentWindow();
 const settings = new Store({ name: 'Settings' });
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
+log.debug(sessConfig);
+
 const wsession = new WalletShellSession(sessConfig);
 
 /* sync progress ui */
