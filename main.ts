@@ -15,15 +15,6 @@ import * as splash from '@trodi/electron-splashscreen';
 
 log.debug(config)
 
-interface AppConfig {
-    promptExit: boolean;
-    promptShown: boolean;
-    needToExit: boolean;
-    debug: any;
-    walletConfig: any;
-    publicNodesUpdated: boolean;
-}
-
 const platform : string = os.platform();
 const settings = new Store({ name: 'Settings' });
 
@@ -68,14 +59,12 @@ const DEFAULT_SIZE : DefaultSize = { width: 840, height: 680 };
 
 const WIN_TITLE : string = `${config.appName} ${WALLETSHELL_VERSION} - ${config.appDescription}`;
 
-const appConfig: AppConfig = {
-    promptExit: true,
-    promptShown: false,
-    needToExit: false,
-    debug: IS_DEBUG,
-    walletConfig: WALLET_CFGFILE,
-    publicNodesUpdated: false,
-}
+app.prompExit = true;
+app.prompShown = false;
+app.needToExit = false;
+app.debug = IS_DEBUG;
+app.walletConfig = WALLET_CFGFILE;
+app.publicNodesUpdated = false;
 
 app.setAppUserModelId(config.appId);
 
@@ -148,27 +137,27 @@ function createWindow() {
     });
 
     win.on('close', (e) => {
-        if ((settings.get('tray_close') && !appConfig.needToExit && platform !== 'darwin')) {
+        if ((settings.get('tray_close') && !app.needToExit && platform !== 'darwin')) {
             e.preventDefault();
             win.hide();
-        } else if (appConfig.promptExit) {
+        } else if (app.promptExit) {
             e.preventDefault();
-            if (appConfig.promptShown) return;
+            if (app.promptShown) return;
             let msg = 'Are you sure want to exit?';
-            appConfig.promptShown = true;
+            app.promptShown = true;
             dialog.showMessageBox({
                 type: 'question',
                 buttons: ['Yes', 'No'],
                 title: 'Exit Confirmation',
                 message: msg
             }, function (response) {
-                appConfig.promptShown = false;
+                app.promptShown = false;
                 if (response === 0) {
-                    appConfig.promptExit = false;
+                    app.promptExit = false;
                     win.webContents.send('cleanup', 'Clean it up, Dad!');
                 } else {
-                    appConfig.promptExit = true;
-                    appConfig.needToExit = false;
+                    app.promptExit = true;
+                    app.needToExit = false;
                 }
             });
         }
@@ -179,7 +168,7 @@ function createWindow() {
             { label: 'Minimize to tray', click: () => { win.hide(); } },
             {
                 label: 'Quit', click: () => {
-                    appConfig.needToExit = true;
+                    app.needToExit = true;
                     if (win) {
                         win.close();
                     } else {
@@ -222,7 +211,7 @@ function createWindow() {
                 { label: 'Minimize to tray', click: () => { win.hide(); } },
                 {
                     label: 'Quit', click: () => {
-                        appConfig.needToExit = true;
+                        app.needToExit = true;
                         win.close();
                     }
                 }
@@ -240,7 +229,7 @@ function createWindow() {
                 { label: 'Restore', click: () => { win.show(); } },
                 {
                     label: 'Quit', click: () => {
-                        appConfig.needToExit = true;
+                        app.needToExit = true;
                         win.close();
                     }
                 }
