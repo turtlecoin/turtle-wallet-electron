@@ -54,9 +54,11 @@ This wallet contains the basic functions required to manage your TurtleCoin asse
 Please visit our wiki page: [WalletShell User Guide](../../wiki).
 
 ### Building/Packaging WalletShell
-You need to have `Node.js` and `npm` installed, go to https://nodejs.org and find out how to get it installed on your platform.
 
-You'll need `typescript` installed (install it with `npm` using `npm i -g typescript`)
+* You need to have `Node.js` and `npm` installed, go to https://nodejs.org and find out how to get it installed on your platform.
+* You'll need `typescript` installed (install it with `npm` using `npm i -g typescript`)
+* You'll need the latest version of turtle-service, download it from the latest release here: https://github.com/turtlecoin/turtlecoin/releases
+
 
 Once you have Node+npm and typescript installed:
 ```
