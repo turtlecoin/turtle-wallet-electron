@@ -95,7 +95,7 @@ export const config: IConfig = {
   // standard wallet address length, for address validation
   addressLength: 99,
   // integrated wallet address length, for address validation. Added length is length of payment ID encoded in base58.
-  integratedAddressLength: this.addressLength + ((64 * 11) / 8),
+  integratedAddressLength: /*addressLength*/ 99 + ((64 * 11) / 8),
 
   // minimum fee for sending transaction
   minimumFee: 0.1,
@@ -106,7 +106,7 @@ export const config: IConfig = {
   // to represent human readable value
   decimalPlaces: 2,
   // to convert from atomic unit
-  decimalDivisor: 10 ** this.decimalPlaces,
+  decimalDivisor: 10 ** 2, //this.decimalPlaces
 
   // obfuscate address book entries, set to false if you want to save it in plain json file.
   // not for security because the encryption key is attached here
