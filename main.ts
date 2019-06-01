@@ -13,8 +13,6 @@ import os from 'os';
 import * as log from 'electron-log';
 import * as splash from '@trodi/electron-splashscreen';
 
-log.debug(config)
-
 const platform : string = os.platform();
 const settings = new Store({ name: 'Settings' });
 

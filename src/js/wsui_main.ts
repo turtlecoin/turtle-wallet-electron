@@ -2180,7 +2180,13 @@ function handleSendTransfer() {
                 } else if (err.includes('size is too big')) {
                     msg = `Failed to send Transaction:
                     Transaction size is too big. Please optimize your wallet, or try sending in smaller amount`;
-                }
+                } else if (err.includes('Invalid or no rpc password')) {
+                    msg = `Invalid RPC Password:
+                    Password is incorrect. Something went wrong`;
+                } else if (err.includes('Invalid Request')) {
+                    msg = `Invalid Request:
+                    Something went wrong`;
+                } 
                 formMessageSet('send', 'error', `${msg}`);
             });
             wsutil.clearChild(md);
