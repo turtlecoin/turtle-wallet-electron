@@ -7,22 +7,21 @@ import { syncStatus } from './ws_constants';
 import * as log from 'electron-log';
 
 const wsutil = new Utils();
-const brwin = remote.getCurrentWindow();
+const brwin: any = remote.getCurrentWindow();
 const settings = new Store({ name: 'Settings' });
 const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
-log.debug(sessConfig);
 
 const wsession = new WalletShellSession(sessConfig);
 
 /* sync progress ui */
-const syncDiv = document.getElementById('navbar-div-sync');
-const syncInfoBar = document.getElementById('navbar-text-sync');
-const connInfoDiv = document.getElementById('conn-info');
-const WFCLEAR_INTERVAL = 5;
+const syncDiv: any = document.getElementById('navbar-div-sync');
+const syncInfoBar: any = document.getElementById('navbar-text-sync');
+const connInfoDiv: any = document.getElementById('conn-info');
+const WFCLEAR_INTERVAL: number = 5;
 
-let WFCLEAR_TICK = 0;
-let FUSION_CHECK = 0;
-let TX_INITIALIZED = false;
+let WFCLEAR_TICK: number = 0;
+let FUSION_CHECK: number = 0;
+let TX_INITIALIZED: boolean = false;
 
 export class UpdateUiState {
 
@@ -32,7 +31,7 @@ export class UpdateUiState {
     }
 
     public triggerTxRefresh() {
-        const txUpdateInputFlag = document.getElementById('transaction-updated');
+        const txUpdateInputFlag: any = document.getElementById('transaction-updated');
         txUpdateInputFlag.value = 1;
         txUpdateInputFlag.dispatchEvent(new Event('change'));
     }
@@ -349,7 +348,7 @@ export class UpdateUiState {
             let itNotification = new Notification('Incoming Transfer', notiOptions);
             itNotification.onclick = (event) => {
                 event.preventDefault();
-                let txNotifyFiled = document.getElementById('transaction-notify');
+                let txNotifyFiled: any = document.getElementById('transaction-notify');
                 txNotifyFiled.value = 1;
                 txNotifyFiled.dispatchEvent(new Event('change'));
                 if (!brwin.isVisible()) brwin.show();
@@ -364,7 +363,7 @@ export class UpdateUiState {
         let nodeFee = parseFloat(fee);
         if (nodeFee <= 0) return;
 
-        let dialog = document.getElementById('main-dialog');
+        let dialog: any = document.getElementById('main-dialog');
         if (dialog.hasAttribute('open')) return;
         dialog.classList.add('dialog-warning');
         let htmlStr = `
@@ -387,23 +386,7 @@ export class UpdateUiState {
         //let backupReminder = document.getElementById('button-overview-showkeys');
         if (!address) {
             this.triggerTxRefresh();
-            //backupReminder.classList.remove('connected');
-            try { clearInterval(window.backupReminderTimer); } catch (_e) { }
-            return;
         }
-
-        // window.backupReminderTimer = setInterval(() => {
-        //     if (Math.floor(Math.random() * Math.floor(2)) >= 1) {
-        //         backupReminder.classList.add('connected');
-        //         backupReminder.classList.add('reminder');
-        //         setTimeout(() => {
-        //             backupReminder.classList.remove('reminder');
-        //         }, 2000);
-        //         setTimeout(() => {
-        //             backupReminder.classList.remove('connected');
-        //         }, 2200);
-        //     }
-        // }, 50000);
 
         let walletHash = wsutil.fnvhash(address);
         wsession.set('walletHash', walletHash);
@@ -429,7 +412,7 @@ export class UpdateUiState {
         if (!allFormInputs) return;
 
         for (var i = 0; i < allFormInputs.length; i++) {
-            let el = allFormInputs[i];
+            let el: any = allFormInputs[i];
             if (el.dataset.initial) {
                 if (!el.dataset.noclear) {
                     el.value = settings.has(el.dataset.initial) ? settings.get(el.dataset.initial) : '';
@@ -457,7 +440,7 @@ export class UpdateUiState {
     }
 
     // update ui state, push from svc_main
-    public updateUiState(msg) {
+    public updateUiState(msg: any) {
         // do something with msg
         switch (msg.type) {
             case 'blockUpdated':
@@ -476,7 +459,7 @@ export class UpdateUiState {
                 this.updateQr(msg.data);
                 break;
             case 'sectionChanged':
-                if (msg.data) this.resetFormState(msg.data);
+                if (msg.data) this.resetFormState();
                 break;
             case 'fusionTxCompleted':
                 const fusionProgressBar = document.getElementById('fusionProgress');

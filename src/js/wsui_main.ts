@@ -47,91 +47,91 @@ let WALLET_OPEN_IN_PROGRESS = false;
 
 /*  dom elements vars; */
 // main section link
-let sectionButtons;
+let sectionButtons: any;
 // generics
-let genericBrowseButton;
-let genericFormMessage;
-let genericEnterableInputs;
-let genericEditableInputs;
-let firstTab;
+let genericBrowseButton: any;
+let genericFormMessage: any;
+let genericEnterableInputs: any;
+let genericEditableInputs: any;
+let firstTab: any;
 // settings page
-let settingsInputServiceBin;
-let settingsInputMinToTray;
-let settingsInputCloseToTray;
-let settingsInputExcludeOfflineNodes;
-let settingsInputTimeout;
-let settingsButtonSave;
+let settingsInputServiceBin: any;
+let settingsInputMinToTray: any;
+let settingsInputCloseToTray: any;
+let settingsInputExcludeOfflineNodes: any;
+let settingsInputTimeout: any;
+let settingsButtonSave: any;
 // overview page
-let overviewWalletAddress;
-let overviewWalletCloseButton;
-let overviewWalletRescanButton;
-let overviewPaymentIdGen;
-let overviewIntegratedAddressGen;
-let overviewShowKeyButton;
+let overviewWalletAddress: any;
+let overviewWalletCloseButton: any;
+let overviewWalletRescanButton: any;
+let overviewPaymentIdGen: any;
+let overviewIntegratedAddressGen: any;
+let overviewShowKeyButton: any;
 // addressbook page
-let addressBookInputName;
-let addressBookInputWallet;
-let addressBookInputPaymentId;
-let addressBookInputUpdate;
-let addressBookButtonSave;
+let addressBookInputName: any;
+let addressBookInputWallet: any;
+let addressBookInputPaymentId: any;
+let addressBookInputUpdate: any;
+let addressBookButtonSave: any;
 // new abook
-let addressBookButtonAdd;
-let addressBookSelector;
+let addressBookButtonAdd: any;
+let addressBookSelector: any;
 // open wallet page
-let walletOpenInputPath;
-let walletOpenInputPassword;
-let walletOpenButtonOpen;
-let walletOpenButtons;
-let walletOpenInputNode;
-let walletOpenNodeLabel;
-let walletOpenSelectBox;
-let walletOpenSelectOpts;
-let walletOpenAddCustomNode;
-let walletOpenRefreshNodes;
+let walletOpenInputPath: any;
+let walletOpenInputPassword: any;
+let walletOpenButtonOpen: any;
+let walletOpenButtons: any;
+let walletOpenInputNode: any;
+let walletOpenNodeLabel: any;
+let walletOpenSelectBox: any;
+let walletOpenSelectOpts: any;
+let walletOpenAddCustomNode: any;
+let walletOpenRefreshNodes: any;
 // show/export keys page
-let showkeyButtonExportKey;
-let showkeyInputViewKey;
-let showkeyInputSpendKey;
-let showkeyInputSeed;
+let showkeyButtonExportKey: any;
+let showkeyInputViewKey: any;
+let showkeyInputSpendKey: any;
+let showkeyInputSeed: any;
 // send page
-let sendInputAddress;
-let sendInputAmount;
-let sendInputPaymentId;
-let sendInputFee;
-let sendButtonSend;
-let sendMaxAmount;
-let sendOptimize;
+let sendInputAddress: any;
+let sendInputAmount: any;
+let sendInputPaymentId: any;
+let sendInputFee: any;
+let sendButtonSend: any;
+let sendMaxAmount: any;
+let sendOptimize: any;
 // create wallet
-let overviewButtonCreate;
-let walletCreateInputPath;
+let overviewButtonCreate: any;
+let walletCreateInputPath: any;
 // let walletCreateInputFilename;
-let walletCreateInputPassword;
+let walletCreateInputPassword: any;
 // import wallet keys
-let importKeyButtonImport;
-let importKeyInputPath;
+let importKeyButtonImport: any;
+let importKeyInputPath: any;
 // let importKeyInputFilename;
-let importKeyInputPassword;
-let importKeyInputViewKey;
-let importKeyInputSpendKey;
-let importKeyInputScanHeight;
+let importKeyInputPassword: any;
+let importKeyInputViewKey: any;
+let importKeyInputSpendKey: any;
+let importKeyInputScanHeight: any;
 // import wallet seed
-let importSeedButtonImport;
-let importSeedInputPath;
+let importSeedButtonImport: any;
+let importSeedInputPath: any;
 //let importSeedInputFilename;
-let importSeedInputPassword;
-let importSeedInputMnemonic;
-let importSeedInputScanHeight;
+let importSeedInputPassword: any;
+let importSeedInputMnemonic: any;
+let importSeedInputScanHeight: any;
 // transaction
-let txButtonRefresh;
-let txButtonSortAmount;
-let txButtonSortDate;
-let txInputUpdated;
-let txButtonExport;
+let txButtonRefresh: any;
+let txButtonSortAmount: any;
+let txButtonSortDate: any;
+let txInputUpdated: any;
+let txButtonExport: any;
 // misc
-let thtml;
-let dmswitch;
-let kswitch;
-let iswitch;
+let thtml: any;
+let dmswitch: any;
+let kswitch: any;
+let iswitch: any;
 
 function populateElementVars() {
     // misc
@@ -257,7 +257,7 @@ let junkTemplate = (text) => {
 };
 
 function initSectionTemplates() {
-    const importLinks = document.querySelectorAll('link[rel="import"]');
+    const importLinks: any = document.querySelectorAll('link[rel="import"]');
     for (var i = 0; i < importLinks.length; i++) {
         let template = importLinks[i].import.getElementsByTagName("template")[0];
         let templateString = junkTemplate(template.innerHTML);
@@ -304,14 +304,14 @@ function genPaymentId(ret) {
             <textarea data-cplabel="Payment ID" title="click to copy" class="ctcl default-textarea" rows="1" readonly="readonly">${payId.toUpperCase()}</textarea>
             <span title="Close this dialog (esc)" class="dialog-close dialog-close-default" data-target="#ab-dialog"><i class="fas fa-window-close"></i></span>
         </div>`;
-    let dialog = document.getElementById('ab-dialog');
+    let dialog: any = document.getElementById('ab-dialog');
     if (dialog.hasAttribute('open')) dialog.close();
     dialog.innerHTML = dialogTpl;
     dialog.showModal();
 }
 
 function showIntegratedAddressForm() {
-    let dialog = document.getElementById('ab-dialog');
+    let dialog: any = document.getElementById('ab-dialog');
     let ownAddress = wsession.get('loadedWalletAddress');
     if (dialog.hasAttribute('open')) dialog.close();
 
@@ -343,7 +343,7 @@ function showIntegratedAddressForm() {
 }
 
 function showKeyBindings() {
-    let dialog = document.getElementById('ab-dialog');
+    let dialog: any = document.getElementById('ab-dialog');
     if (dialog.hasAttribute('open')) dialog.close();
     let shortcutstInfo = document.getElementById('shortcuts-main').innerHTML;
     let keybindingTpl = `
@@ -355,7 +355,7 @@ function showKeyBindings() {
 }
 
 function showAbout() {
-    let dialog = document.getElementById('ab-dialog');
+    let dialog: any = document.getElementById('ab-dialog');
     if (dialog.hasAttribute('open')) dialog.close();
     let infoContent = document.querySelector('.about-main').innerHTML;
     let info = `
@@ -443,7 +443,7 @@ function changeSection(sectionId: any, targetRedir?: any) {
     if (section.classList.contains('is-shown')) {
         if (toastMsg.length && !targetRedir) wsutil.showToast(toastMsg);
         return;
-    }
+    }   
 
     // reset quick filters
     if (finalTarget === 'section-transactions' && window.TXOPTSAPI) {
@@ -929,7 +929,7 @@ function handleAddressBook() {
     // display address book item
     function renderItem(e) {
         let data = e.data;
-        let dialog = document.getElementById('ab-dialog');
+        let dialog: any = document.getElementById('ab-dialog');
         if (dialog.hasAttribute('open')) dialog.close();
 
         let sendTrtl = '';
@@ -992,7 +992,7 @@ function handleAddressBook() {
 
     // add new address book file
     addressBookButtonAdd.addEventListener('click', () => {
-        let dialog = document.getElementById('ab-dialog');
+        let dialog: any = document.getElementById('ab-dialog');
         if (dialog.hasAttribute('open')) dialog.close();
         let tpl = `
             <div class="div-transactions-panel">
@@ -1034,14 +1034,14 @@ function handleAddressBook() {
             sendInputPaymentId.value = entry.paymentId;
         }
         // close dialog
-        let axdialog = document.getElementById('ab-dialog');
+        let axdialog: any = document.getElementById('ab-dialog');
         axdialog.close();
         wsutil.clearChild(axdialog);
     });
 
     wsutil.liveEvent('#createNewAddressBook', 'click', () => {
-        let addrBookNameEl = document.getElementById('pAddressbookName');
-        let addrBookPassEl = document.getElementById('pAddressbookPass');
+        let addrBookNameEl: any = document.getElementById('pAddressbookName');
+        let addrBookPassEl: any = document.getElementById('pAddressbookPass');
         let name = addrBookNameEl.value.trim() || null;
         let pass = addrBookPassEl.value.trim() || null;
         if (!name || !pass) {
@@ -1067,7 +1067,7 @@ function handleAddressBook() {
         // finally create & load new adddressbook
         loadAddressBook({ path: addrPath, name: name, pass: pass });
         // close dialog
-        let axdialog = document.getElementById('ab-dialog');
+        let axdialog: any = document.getElementById('ab-dialog');
         axdialog.close();
         wsutil.clearChild(axdialog);
         // display message
@@ -1080,7 +1080,7 @@ function handleAddressBook() {
         let name = addressBookSelector.options[addressBookSelector.selectedIndex].text;
 
         if (filename !== 'default') {
-            let dialog = document.getElementById('ab-dialog');
+            let dialog: any = document.getElementById('ab-dialog');
             if (dialog.hasAttribute('open')) dialog.close();
             let tpl = `
                 <div class="div-transactions-panel">
@@ -1113,7 +1113,7 @@ function handleAddressBook() {
     });
 
     wsutil.liveEvent('#addressBookSwitcherClose', 'click', () => {
-        let dialog = document.getElementById('ab-dialog');
+        let dialog: any = document.getElementById('ab-dialog');
         if (dialog.hasAttribute('open')) dialog.close();
         updateAddressBookSelector();
     });
@@ -1141,7 +1141,7 @@ function handleAddressBook() {
                 return;
             } else {
                 // close dialog
-                let axdialog = document.getElementById('ab-dialog');
+                let axdialog: any = document.getElementById('ab-dialog');
                 axdialog.close();
                 wsutil.clearChild(axdialog);
                 // show msg
@@ -1236,10 +1236,10 @@ function handleAddressBook() {
         if (!entry) {
             wsutil.showToast('Invalid address book entry');
         } else {
-            const nameField = document.getElementById('input-addressbook-name');
-            const walletField = document.getElementById('input-addressbook-wallet');
-            const payidField = document.getElementById('input-addressbook-paymentid');
-            const updateField = document.getElementById('input-addressbook-update');
+            const nameField: any = document.getElementById('input-addressbook-name');
+            const walletField: any = document.getElementById('input-addressbook-wallet');
+            const payidField: any = document.getElementById('input-addressbook-paymentid');
+            const updateField: any = document.getElementById('input-addressbook-update');
             nameField.value = entry.name;
             nameField.dataset.oldhash = origHash;
             walletField.value = entry.address;
@@ -1247,7 +1247,7 @@ function handleAddressBook() {
             updateField.value = 1;
         }
         changeSection('section-addressbook-add');
-        let axdialog = document.getElementById('ab-dialog');
+        let axdialog: any = document.getElementById('ab-dialog');
         axdialog.close();
         wsutil.clearChild(axdialog);
     });
@@ -1273,7 +1273,7 @@ function handleAddressBook() {
         wsession.set('addressBook', addressBookData);
         let rowData = Object.entries(addressBookData.data).map(([key, value]) => ({ key, value }));
         window.ABOPTSAPI.api.setRowData(rowData);
-        let axdialog = document.getElementById('ab-dialog');
+        let axdialog: any = document.getElementById('ab-dialog');
         axdialog.close();
         wsutil.clearChild(axdialog);
         wsutil.showToast('Address book entry have been deleted');
@@ -1332,7 +1332,7 @@ function handleAddressBook() {
             // new session, load from file
             try {
                 addressBook.load()
-                    .then((addressData) => {
+                    .then((addressData: any) => {
                         if (!window.addressBookMigrated) {
                             addressData = migrateOldFormat(addressData);
                             window.addressBookMigrated = true;
@@ -1398,7 +1398,7 @@ function handleWalletOpen() {
     }
 
     function addCustomNodeForm() {
-        let dialog = document.getElementById('ab-dialog');
+        let dialog: any = document.getElementById('ab-dialog');
         if (dialog.hasAttribute('open')) dialog.close();
         let customNodes = settings.get('pubnodes_custom');
         let cnode = '<ul class="cnodes">';
@@ -1482,7 +1482,7 @@ function handleWalletOpen() {
         customNodes.push(nodeAddressVal);
         settings.set('pubnodes_custom', customNodes);
         initNodeSelection(nodeAddressVal);
-        let dialog = document.getElementById('ab-dialog');
+        let dialog: any = document.getElementById('ab-dialog');
         if (dialog.hasAttribute('open')) dialog.close();
         wsutil.showToast('New custom node have been added');
     });
@@ -1633,7 +1633,7 @@ function handleWalletOpen() {
     });
 
     let mox = document.getElementById('section-overview-load');
-    mox.addEventListener('click', function (e) {
+    mox.addEventListener('click', function (e: any) {
         function isChild(obj, parentObj) {
             while (obj !== undefined && obj !== null && obj.tagName.toUpperCase() !== 'BODY') {
                 if (obj === parentObj) {
@@ -1677,15 +1677,15 @@ function handleWalletRescan() {
             </div>
             <span title="Close this dialog (esc)" class="dialog-close dialog-close-default" data-target="#ab-dialog"><i class="fas fa-window-close"></i></span>
         </div>`;
-        let dialog = document.getElementById('ab-dialog');
+        let dialog: any = document.getElementById('ab-dialog');
         if (dialog.hasAttribute('open')) dialog.close();
         dialog.innerHTML = dialogTpl;
         dialog.showModal();
     });
 
     wsutil.liveEvent('#button-rescan-start', 'click', () => {
-        let scanHeightEl = document.getElementById('rescanScanHeight');
-        let scanHeight = scanHeightEl.value.length ? parseInt(scanHeightEl.value, 10) : -1;
+        let scanHeightEl: any = document.getElementById('rescanScanHeight');
+        let scanHeight: number = scanHeightEl.value.length ? parseInt(scanHeightEl.value, 10) : -1;
         formMessageReset();
         if (scanHeight < 0) {
             formMessageSet('rescanheight', 'error', 'Please specify a valid scan height');
@@ -1703,7 +1703,7 @@ function handleWalletRescan() {
             resetTransactions();
             wsutil.showToast('Rescan OK, your wallet will be re-synchronize');
         });
-        let d = document.querySelector('dialog[open]');
+        let d: any = document.querySelector('dialog[open]');
         if (d) d.close();
     });
 }
@@ -1713,7 +1713,7 @@ function handleWalletClose() {
         event.preventDefault();
         if (!confirm('Are you sure want to close your wallet?')) return;
 
-        let dialog = document.getElementById('main-dialog');
+        let dialog: any = document.getElementById('main-dialog');
         let htmlStr = '<div class="div-save-main" style="text-align: center;padding:1rem;"><i class="fas fa-spinner fa-pulse"></i><span style="padding:0px 10px;">Saving &amp; closing your wallet...</span></div>';
         wsutil.innerHTML(dialog, htmlStr);
 
@@ -1888,7 +1888,7 @@ function handleWalletImportSeed() {
         let seedValue = importSeedInputMnemonic.value ? importSeedInputMnemonic.value.trim() : '';
         let scanHeightValue = importSeedInputScanHeight.value ? parseInt(importSeedInputScanHeight.value, 10) : 0;
         // validate path
-        wsutil.validateWalletPath(filePathValue, DEFAULT_WALLET_PATH).then((finalPath) => {
+        wsutil.validateWalletPath(filePathValue, DEFAULT_WALLET_PATH).then((finalPath: any) => {
             // validate password
             if (!passwordValue.length) {
                 formMessageSet('import-seed', 'error', `Please enter a password, creating wallet without a password will not be supported!`);
@@ -1947,7 +1947,7 @@ function handleWalletExport() {
     overviewShowKeyButton.addEventListener('click', () => {
         formMessageReset();
         if (!overviewWalletAddress.value) return;
-        wsmanager.getSecretKeys(overviewWalletAddress.value).then((keys) => {
+        wsmanager.getSecretKeys(overviewWalletAddress.value).then((keys: any) => {
             showkeyInputViewKey.value = keys.viewSecretKey;
             showkeyInputSpendKey.value = keys.spendSecretKey;
             if (keys.mnemonicSeed && keys.mnemonicSeed.length > 1) {
@@ -1971,7 +1971,7 @@ function handleWalletExport() {
             ]
         });
         if (filename) {
-            wsmanager.getSecretKeys(overviewWalletAddress.value).then((keys) => {
+            wsmanager.getSecretKeys(overviewWalletAddress.value).then((keys: any) => {
                 let textContent = `Wallet Address:${os.EOL}${wsession.get('loadedWalletAddress')}${os.EOL}`;
                 textContent += `${os.EOL}View Secret Key:${os.EOL}${keys.viewSecretKey}${os.EOL}`;
                 textContent += `${os.EOL}Spend Secret Key:${os.EOL}${keys.spendSecretKey}${os.EOL}`;
@@ -2093,7 +2093,7 @@ function handleSendTransfer() {
         }
 
         // todo: adjust decimal
-        let tx = {
+        let tx: any = {
             address: recipientAddress,
             amount: txAmount,
             fee: txFee
@@ -2127,7 +2127,7 @@ function handleSendTransfer() {
                 <span title="Close this dialog (esc)" class="dialog-close dialog-close-default" data-target="#ab-dialog"><i class="fas fa-window-close"></i></span>
             </div>`;
 
-        let dialog = document.getElementById('tf-dialog');
+        let dialog: any = document.getElementById('tf-dialog');
         wsutil.innerHTML(dialog, tpl);
         dialog = document.getElementById('tf-dialog');
         dialog.showModal();
@@ -2408,7 +2408,7 @@ function handleTransactions() {
                 </div>
             `;
 
-        let dialog = document.getElementById('tx-dialog');
+        let dialog: any = document.getElementById('tx-dialog');
         wsutil.innerHTML(dialog, dialogTpl);
         dialog = document.getElementById('tx-dialog');
         dialog.showModal();
@@ -2479,7 +2479,7 @@ function handleTransactions() {
             };
         });
 
-        let dialog = document.getElementById('ab-dialog');
+        let dialog: any = document.getElementById('ab-dialog');
         let outData = [];
         let outType = '';
         switch (mode) {
@@ -2527,7 +2527,7 @@ function handleTransactions() {
                 <button data-target="#ab-dialog" type="button" class="button-gray dialog-close-default">Cancel</button>
             </div>
         `;
-        let dialog = document.getElementById('ab-dialog');
+        let dialog: any = document.getElementById('ab-dialog');
         if (dialog.hasAttribute('open')) dialog.close();
         dialog.innerHTML = dialogTpl;
         dialog.showModal();
@@ -2668,7 +2668,7 @@ function initHandlers() {
             if (!tg) return;
             let targetId = tg.dataset.pf || null;
             if (!targetId) return;
-            let target = document.getElementById(targetId);
+            let target: any = document.getElementById(targetId);
             target.type = (target.type === "password" ? 'text' : 'password');
             tg.firstChild.dataset.icon = (target.type === 'password' ? 'eye-slash' : 'eye');
         });
@@ -2694,7 +2694,7 @@ function initHandlers() {
         }
         // generic dialog closer
         wsutil.liveEvent('.dialog-close-default', 'click', () => {
-            let d = document.querySelector('dialog[open]');
+            let d: any = document.querySelector('dialog[open]');
             if (d) d.close();
         });
         // form submit
@@ -2725,17 +2725,18 @@ function initHandlers() {
             genPaymentId(false);
         });
         wsutil.liveEvent('#makePaymentId', 'click', () => {
-            let payId = genPaymentId(true);
-            let iaf = document.getElementById('genOutputIntegratedAddress');
-            document.getElementById('genInputPaymentId').value = payId;
+            let payId: any = genPaymentId(true);
+            let iaf: any = document.getElementById('genOutputIntegratedAddress');
+            let getPayId: any = document.getElementById('genInputPaymentId');
+            getPayId.value = payId;
             iaf.value = '';
         });
         overviewIntegratedAddressGen.addEventListener('click', showIntegratedAddressForm);
         wsutil.liveEvent('#doGenIntegratedAddr', 'click', () => {
             formMessageReset();
-            let genInputAddress = document.getElementById('genInputAddress');
-            let genInputPaymentId = document.getElementById('genInputPaymentId');
-            let outputField = document.getElementById('genOutputIntegratedAddress');
+            let genInputAddress: any = document.getElementById('genInputAddress');
+            let genInputPaymentId: any = document.getElementById('genInputPaymentId');
+            let outputField: any = document.getElementById('genOutputIntegratedAddress');
             let addr = genInputAddress.value ? genInputAddress.value.trim() : '';
             let pid = genInputPaymentId.value ? genInputPaymentId.value.trim() : '';
             outputField.value = '';
@@ -2758,7 +2759,7 @@ function initHandlers() {
                 return;
             }
 
-            wsmanager.genIntegratedAddress(pid, addr).then((res) => {
+            wsmanager.genIntegratedAddress(pid, addr).then((res: any) => {
                 formMessageReset();
                 outputField.value = res.integratedAddress;
                 outputField.setAttribute('title', 'click to copy');
@@ -2872,13 +2873,13 @@ function initKeyBindings() {
 
     // show key binding
     Mousetrap.bind(['ctrl+/', 'command+/'], () => {
-        let openedDialog = document.querySelector('dialog[open]');
+        let openedDialog: any = document.querySelector('dialog[open]');
         if (openedDialog) return openedDialog.close();
         return showKeyBindings();
     });
 
     Mousetrap.bind('esc', () => {
-        let openedDialog = document.querySelector('dialog[open]');
+        let openedDialog: any = document.querySelector('dialog[open]');
         if (!openedDialog) return;
         return openedDialog.close();
     });
@@ -3033,7 +3034,7 @@ ipcRenderer.on('cleanup', () => {
 
     win.focus();
 
-    var dialog = document.getElementById('main-dialog');
+    let dialog: any = document.getElementById('main-dialog');
     let htmlText = 'Terminating WalletShell...';
     if (wsession.get('loadedWalletAddress') !== '') {
         htmlText = 'Saving &amp; closing your wallet...';

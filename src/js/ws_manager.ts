@@ -98,9 +98,10 @@ export class WalletShellManager {
 
     public getUnusedPort() {
         let port = SERVICE_MIN_LISTEN_PORT;
+        let errorCode;
         const server = net.createServer();
         return new Promise((resolve, reject) => server
-            .on('error', error => error.code === 'EADDRINUSE' ? server.listen(++port) : reject(error))
+            .on('error', error => errorCode === 'EADDRINUSE' ? server.listen(++port) : reject(error))
             .on('listening', () => server.close(() => resolve(port)))
             .listen(port));
     };
