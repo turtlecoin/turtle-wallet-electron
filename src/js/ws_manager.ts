@@ -17,8 +17,7 @@ import { syncStatus } from './ws_constants';
 
 const wsutil = new Utils();
 const settings = new Store({ name: 'Settings' });
-const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
-log.debug(sessConfig);
+const sessConfig = { debug: (remote as any).app.debug, walletConfig: (remote as any).app.walletConfig };
 const wsession = new WalletShellSession(sessConfig);
 const uiupdater = new UpdateUiState();
 
@@ -100,7 +99,7 @@ export class WalletShellManager {
         let port = SERVICE_MIN_LISTEN_PORT;
         const server = net.createServer();
         return new Promise((resolve, reject) => server
-            .on('error', error => error.code === 'EADDRINUSE' ? server.listen(++port) : reject(error))
+            .on('error', error => (error as any).code === 'EADDRINUSE' ? server.listen(++port) : reject(error))
             .on('listening', () => server.close(() => resolve(port)))
             .listen(port));
     };

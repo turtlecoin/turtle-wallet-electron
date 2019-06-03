@@ -57,12 +57,12 @@ const DEFAULT_SIZE : DefaultSize = { width: 840, height: 680 };
 
 const WIN_TITLE : string = `${config.appName} ${WALLETSHELL_VERSION} - ${config.appDescription}`;
 
-app.prompExit = true;
-app.prompShown = false;
-app.needToExit = false;
-app.debug = IS_DEBUG;
-app.walletConfig = WALLET_CFGFILE;
-app.publicNodesUpdated = false;
+(app as any).prompExit = true;
+(app as any).prompShown = false;
+(app as any).needToExit = false;
+(app as any).debug = IS_DEBUG;
+(app as any).walletConfig = WALLET_CFGFILE;
+(app as any).publicNodesUpdated = false;
 
 app.setAppUserModelId(config.appId);
 
@@ -135,27 +135,27 @@ function createWindow() {
     });
 
     win.on('close', (e) => {
-        if ((settings.get('tray_close') && !app.needToExit && platform !== 'darwin')) {
+        if ((settings.get('tray_close') && !(app as any).needToExit && platform !== 'darwin')) {
             e.preventDefault();
             win.hide();
-        } else if (app.promptExit) {
+        } else if ((app as any).promptExit) {
             e.preventDefault();
-            if (app.promptShown) return;
+            if ((app as any).promptShown) return;
             let msg = 'Are you sure want to exit?';
-            app.promptShown = true;
+            (app as any).promptShown = true;
             dialog.showMessageBox({
                 type: 'question',
                 buttons: ['Yes', 'No'],
                 title: 'Exit Confirmation',
                 message: msg
             }, function (response) {
-                app.promptShown = false;
+                (app as any).promptShown = false;
                 if (response === 0) {
-                    app.promptExit = false;
+                    (app as any).promptExit = false;
                     win.webContents.send('cleanup', 'Clean it up, Dad!');
                 } else {
-                    app.promptExit = true;
-                    app.needToExit = false;
+                    (app as any).promptExit = true;
+                    (app as any).needToExit = false;
                 }
             });
         }
@@ -166,7 +166,7 @@ function createWindow() {
             { label: 'Minimize to tray', click: () => { win.hide(); } },
             {
                 label: 'Quit', click: () => {
-                    app.needToExit = true;
+                    (app as any).needToExit = true;
                     if (win) {
                         win.close();
                     } else {
@@ -209,7 +209,7 @@ function createWindow() {
                 { label: 'Minimize to tray', click: () => { win.hide(); } },
                 {
                     label: 'Quit', click: () => {
-                        app.needToExit = true;
+                        (app as any).needToExit = true;
                         win.close();
                     }
                 }
@@ -227,7 +227,7 @@ function createWindow() {
                 { label: 'Restore', click: () => { win.show(); } },
                 {
                     label: 'Quit', click: () => {
-                        app.needToExit = true;
+                        (app as any).needToExit = true;
                         win.close();
                     }
                 }

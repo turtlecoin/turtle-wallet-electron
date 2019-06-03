@@ -21,11 +21,7 @@ import { WalletShellAddressBook } from './ws_addressbook'
 
 const wsutil = new Utils();
 const wsmanager = new WalletShellManager();
-const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
-
-log.debug(sessConfig);
-
-
+const sessConfig = { debug: (remote as any).app.debug, walletConfig: (remote as any).app.walletConfig };
 
 const wsession = new WalletShellSession(sessConfig);
 const settings = new Store({ name: 'Settings' });
@@ -41,6 +37,14 @@ const win = remote.getCurrentWindow();
 const Menu = remote.Menu;
 const WS_VERSION = settings.get('version', 'unknown');
 const DEFAULT_WALLET_PATH = remote.app.getPath('documents');
+
+let TXOPTSAPI: any;
+let ABOPTSAPI: any;
+let COMPLETION_ADDRBOOK: any
+let ABGRID: any;
+let TXGRID: any;
+let FETCHNODESIG: any;
+let ELECTRON_ENABLE_SECURITY_WARNINGS: any;
 
 
 let WALLET_OPEN_IN_PROGRESS = false;
@@ -446,11 +450,11 @@ function changeSection(sectionId: any, targetRedir?: any) {
     }   
 
     // reset quick filters
-    if (finalTarget === 'section-transactions' && window.TXOPTSAPI) {
-        window.TXOPTSAPI.api.setQuickFilter('');
+    if (finalTarget === 'section-transactions' && TXOPTSAPI) {
+        TXOPTSAPI.api.setQuickFilter('');
     }
-    if (finalTarget === 'section-addressbook' && window.ABOPTSAPI) {
-        window.ABOPTSAPI.api.setQuickFilter('');
+    if (finalTarget === 'section-addressbook' && ABOPTSAPI) {
+        ABOPTSAPI.api.setQuickFilter('');
     }
 
     // navbar active section indicator, only for main section
@@ -555,7 +559,7 @@ function initNodeSelection(nodeAddr?: string) {
             }
 
             if (node === selected) {
-                opt.setAttribute('selected', true);
+                (opt as any).setAttribute('selected', true);
                 fakeOpt.classList.add('selected');
                 selectedLabel = fakeOpt.innerHTML;
             }
@@ -580,7 +584,7 @@ function initNodeSelection(nodeAddr?: string) {
                 fakeOpt.innerHTML = `<span class="node-address">${all_labels[0].trim()}</span> <span class="node-info">(${all_labels[1].trim()})</span>`;
 
                 if (node.host === selected) {
-                    opt.setAttribute('selected', true);
+                    (opt as any).setAttribute('selected', true);
                     fakeOpt.classList.add('selected');
                     selectedLabel = fakeOpt.innerHTML;
                 }
@@ -738,12 +742,12 @@ function initAddressCompletion(data) {
     }
 
     try {
-        if (window.COMPLETION_ADDRBOOK) window.COMPLETION_ADDRBOOK.destroy();
+        if (COMPLETION_ADDRBOOK) COMPLETION_ADDRBOOK.destroy();
     } catch (e) {
         console.log(e);
     }
 
-    window.COMPLETION_ADDRBOOK = new autoComplete({
+    COMPLETION_ADDRBOOK = new autoComplete({
         selector: 'input[id="input-send-address"]',
         minChars: 1,
         cache: false,
@@ -765,7 +769,8 @@ function initAddressCompletion(data) {
             return `<div class="autocomplete-suggestion" data-paymentid="${wpayid}" data-val="${waddr}">${wname.replace(re, "<b>$1</b>")}<br><span class="autocomplete-wallet-addr">${waddr.replace(re, "<b>$1</b>")}<br>Payment ID: ${(wpayid ? wpayid.replace(re, "<b>$1</b>") : 'N/A')}</span></div>`;
         },
         onSelect: function (e, term, item) {
-            document.getElementById('input-send-payid').value = item.getAttribute('data-paymentid');
+            let getPayID: any = document.getElementById('input-send-payid')
+            getPayID.value = item.getAttribute('data-paymentid');
         }
     });
 }
@@ -846,7 +851,7 @@ function handleAddressBook() {
 
     // address book list
     function renderList(data) {
-        if (!window.ABGRID) {
+        if (!ABGRID) {
             let columnDefs = [
                 { headerName: 'Key', field: 'key', hide: true },
                 {
@@ -889,8 +894,8 @@ function handleAddressBook() {
                 onRowClicked: renderItem
             };
             let abGrid = document.getElementById('abGrid');
-            window.ABGRID = new AgGrid.Grid(abGrid, gridOptions);
-            window.ABOPTSAPI = gridOptions;
+            ABGRID = new AgGrid.Grid(abGrid, gridOptions);
+            ABOPTSAPI = gridOptions;
 
             gridOptions.onGridReady = function () {
                 abGrid.style.width = "100%";
@@ -901,28 +906,28 @@ function handleAddressBook() {
                 agPanel.prepend(sp);
 
                 setTimeout(function () {
-                    window.ABOPTSAPI.api.doLayout();
-                    window.ABOPTSAPI.api.sizeColumnsToFit();
+                    ABOPTSAPI.api.doLayout();
+                    ABOPTSAPI.api.sizeColumnsToFit();
                 }, 100);
             };
 
             window.addEventListener('resize', () => {
-                if (window.ABOPTSAPI) {
-                    window.ABOPTSAPI.api.sizeColumnsToFit();
+                if (ABOPTSAPI) {
+                    ABOPTSAPI.api.sizeColumnsToFit();
                 }
             });
 
-            let abfilter = document.getElementById('ab-search');
+            let abfilter: any = document.getElementById('ab-search');
             abfilter.addEventListener('input', function () {
-                if (window.ABOPTSAPI) {
-                    window.ABOPTSAPI.api.setQuickFilter(this.value);
+                if (ABOPTSAPI) {
+                    ABOPTSAPI.api.setQuickFilter(this.value);
                 }
             });
         } else {
-            window.ABOPTSAPI.api.setRowData(data);
-            window.ABOPTSAPI.api.deselectAll();
-            window.ABOPTSAPI.api.resetQuickFilter();
-            window.ABOPTSAPI.api.sizeColumnsToFit();
+            ABOPTSAPI.api.setRowData(data);
+            ABOPTSAPI.api.deselectAll();
+            ABOPTSAPI.api.resetQuickFilter();
+            ABOPTSAPI.api.sizeColumnsToFit();
         }
     }
 
@@ -1106,7 +1111,7 @@ function handleAddressBook() {
             dialog.showModal();
         } else {
             loadAddressBook({ name: 'default' });
-            if (window.addressBookInitialize) {
+            if ((window as any).addressBookInitialize) {
                 wsutil.showToast(`Address book switched to: Default/builtin`);
             }
         }
@@ -1120,9 +1125,12 @@ function handleAddressBook() {
 
     wsutil.liveEvent('#loadAddressBook', 'click', () => {
         formMessageReset();
-        let name = document.getElementById('pAddressbookOpenName').value || null;
-        let pass = document.getElementById('pAddressbookOpenPass').value || null;
-        let filename = document.getElementById('pAddressbookOpenFilename').value || null;
+        let getName: any = document.getElementById('pAddressbookOpenName')
+        let name = getName.value || null;
+        let getPass: any = document.getElementById('pAddressbookOpenPass')
+        let pass = getPass.value  || null;
+        let getFileName: any = document.getElementById('pAddressbookOpenFilename')
+        let filename = getFileName.value || null;
         let abpath = path.join(ADDRESS_BOOK_DIR, filename);
 
 
@@ -1145,7 +1153,7 @@ function handleAddressBook() {
                 axdialog.close();
                 wsutil.clearChild(axdialog);
                 // show msg
-                if (window.addressBookInitialize) {
+                if ((window as any).addressBookInitialize) {
                     wsutil.showToast(`Address book switched to: ${name}`);
                 }
             }
@@ -1208,10 +1216,10 @@ function handleAddressBook() {
         }
         wsession.set('addressBook', abook);
         let rowData = Object.entries(abook.data).map(([key, value]) => ({ key, value }));
-        window.ABOPTSAPI.api.setRowData(rowData);
-        window.ABOPTSAPI.api.deselectAll();
-        window.ABOPTSAPI.api.resetQuickFilter();
-        window.ABOPTSAPI.api.sizeColumnsToFit();
+        ABOPTSAPI.api.setRowData(rowData);
+        ABOPTSAPI.api.deselectAll();
+        ABOPTSAPI.api.resetQuickFilter();
+        ABOPTSAPI.api.sizeColumnsToFit();
         wsutil.showToast('Address book entry have been saved.');
         changeSection('section-addressbook');
 
@@ -1272,7 +1280,7 @@ function handleAddressBook() {
         delete addressBookData.data[et];
         wsession.set('addressBook', addressBookData);
         let rowData = Object.entries(addressBookData.data).map(([key, value]) => ({ key, value }));
-        window.ABOPTSAPI.api.setRowData(rowData);
+        ABOPTSAPI.api.setRowData(rowData);
         let axdialog: any = document.getElementById('ab-dialog');
         axdialog.close();
         wsutil.clearChild(axdialog);
@@ -1286,7 +1294,7 @@ function handleAddressBook() {
     // delete selected
     wsutil.liveEvent('.ab-delselected', 'click', function () {
         if (!confirm('Are you sure?')) return;
-        let nodes = window.ABOPTSAPI.api.getSelectedNodes();
+        let nodes = ABOPTSAPI.api.getSelectedNodes();
         if (nodes.length) {
             let addressBookData = wsession.get('addressBook');
             if (!addressBookData.data) {
@@ -1302,8 +1310,8 @@ function handleAddressBook() {
             });
             wsession.set('addressBook', addressBookData);
             let rowData = Object.entries(addressBookData.data).map(([key, value]) => ({ key, value }));
-            window.ABOPTSAPI.api.setRowData(rowData);
-            window.ABOPTSAPI.api.deselectAll();
+            ABOPTSAPI.api.setRowData(rowData);
+            ABOPTSAPI.api.deselectAll();
             wsutil.showToast(`Address book item(s) have been deleted`);
             setTimeout(() => {
                 addressBook.save(addressBookData);
@@ -1333,9 +1341,9 @@ function handleAddressBook() {
             try {
                 addressBook.load()
                     .then((addressData: any) => {
-                        if (!window.addressBookMigrated) {
+                        if (!(window as any).addressBookMigrated) {
                             addressData = migrateOldFormat(addressData);
-                            window.addressBookMigrated = true;
+                            (window as any).addressBookMigrated = true;
                         }
                         wsession.set('addressBook', addressData);
                         updateAddressBookSelector(addressData.path);
@@ -1376,7 +1384,7 @@ function handleAddressBook() {
             cancelable: true
         });
         addressBookSelector.dispatchEvent(event);
-        window.addressBookInitialize = true;
+        (window as any).addressBookInitialize = true;
     }, 2000);
 }
 
@@ -1451,7 +1459,7 @@ function handleWalletOpen() {
         e.preventDefault();
         formMessageReset();
         let customNodeAddressInput = document.getElementById('customNodeAddress');
-        let nodeAddressVal = customNodeAddressInput.value ? customNodeAddressInput.value.trim() : false;
+        let nodeAddressVal = (customNodeAddressInput as any).value ? (customNodeAddressInput as any).value.trim() : false;
         if (!nodeAddressVal) {
             formMessageSet('customnode', 'error', 'Invalid node address, accepted format: &lt;domain.tld&gt;:&lt;port_number&gt; or &lt;ip_address&gt;:&lt;port_number&gt;');
             return;
@@ -1849,7 +1857,7 @@ function handleWalletImportKeys() {
                     // for now, backup instead of delete, just to be safe
                     let ts = new Date().getTime();
                     let backfn = `${finalPath}.bak${ts}`;
-                    fs.renameSync(finalPath, backfn);
+                    fs.renameSync((finalPath as any), backfn);
                     //fs.unlinkSync(finalPath);
                 } catch (err) {
                     formMessageSet('import', 'error', `Unable to overwrite existing file, please enter new wallet file path`);
@@ -2140,7 +2148,7 @@ function handleSendTransfer() {
             formMessageSet('send', 'warning', 'Sending transaction, please wait...<br><progress></progress>');
             wsmanager.sendTransaction(tx).then((result) => {
                 formMessageReset();
-                let txhashUrl = `<a class="external" title="view in block explorer" href="${config.blockExplorerUrl.replace('[[TX_HASH]]', result.transactionHash)}">${result.transactionHash}</a>`;
+                let txhashUrl = `<a class="external" title="view in block explorer" href="${config.blockExplorerUrl.replace('[[TX_HASH]]', (result as any).transactionHash)}">${(result as any).transactionHash}</a>`;
                 let okMsg = `Transaction sent!<br>Tx. hash: ${txhashUrl}.<br>Your balance may appear incorrect while transaction not fully confirmed.`;
                 formMessageSet('send', 'success', okMsg);
                 // save to address book if it's new address
@@ -2158,10 +2166,10 @@ function handleSendTransfer() {
                     abook.data[entryHash] = newAddress;
                     wsession.set('addressBook', abook);
                     let rowData = Object.entries(abook.data).map(([key, value]) => ({ key, value }));
-                    window.ABOPTSAPI.api.setRowData(rowData);
-                    window.ABOPTSAPI.api.deselectAll();
-                    window.ABOPTSAPI.api.resetQuickFilter();
-                    window.ABOPTSAPI.api.sizeColumnsToFit();
+                    ABOPTSAPI.api.setRowData(rowData);
+                    ABOPTSAPI.api.deselectAll();
+                    ABOPTSAPI.api.resetQuickFilter();
+                    ABOPTSAPI.api.sizeColumnsToFit();
                     setTimeout(() => {
                         addressBook.save(abook);
                         initAddressCompletion(abook.data);
@@ -2194,7 +2202,7 @@ function handleSendTransfer() {
     });
 
     sendOptimize.addEventListener('click', () => {
-        if (!wsession.get('synchronized', false)) {
+        if (!wsession.get('synchronized')) {
             wsutil.showToast('Synchronization is in progress, please wait.');
             return;
         }
@@ -2222,12 +2230,12 @@ function handleSendTransfer() {
 
 function resetTransactions() {
     setTxFiller(true);
-    if (window.TXGRID === null || window.TXOPTSAPI === null) {
+    if (TXGRID === null || TXOPTSAPI === null) {
         return;
     }
-    window.TXOPTSAPI.api.destroy();
-    window.TXOPTSAPI = null;
-    window.TXGRID = null;
+    TXOPTSAPI.api.destroy();
+    TXOPTSAPI = null;
+    TXGRID = null;
     if (document.querySelector('.txlist-item')) {
         let grid = document.getElementById('txGrid');
         wsutil.clearChild(grid);
@@ -2235,8 +2243,8 @@ function resetTransactions() {
 
 }
 
-window.TXOPTSAPI = null;
-window.TXGRID = null;
+TXOPTSAPI = null;
+TXGRID = null;
 function handleTransactions() {
     function resetTxSortMark() {
         let sortedEl = document.querySelectorAll('#transaction-lists .asc, #transaction-lists .desc');
@@ -2248,7 +2256,7 @@ function handleTransactions() {
 
     function sortDefault() {
         resetTxSortMark();
-        window.TXOPTSAPI.api.setSortModel(getSortModel('timestamp', 'desc'));
+        TXOPTSAPI.api.setSortModel(getSortModel('timestamp', 'desc'));
         txButtonSortDate.dataset.dir = 'desc';
         txButtonSortDate.classList.add('desc');
     }
@@ -2259,7 +2267,7 @@ function handleTransactions() {
 
     function renderList(txs) {
         setTxFiller();
-        if (window.TXGRID === null) {
+        if (TXGRID === null) {
             let columnDefs = [
                 {
                     headerName: 'Data',
@@ -2315,34 +2323,34 @@ function handleTransactions() {
 
             };
             let txGrid = document.getElementById('txGrid');
-            window.TXGRID = new AgGrid.Grid(txGrid, gridOptions);
-            window.TXOPTSAPI = gridOptions;
+            TXGRID = new AgGrid.Grid(txGrid, gridOptions);
+            TXOPTSAPI = gridOptions;
 
-            gridOptions.onGridReady = function () {
+            (gridOptions as any).onGridReady = function () {
                 setTxFiller();
                 txGrid.style.width = "100%";
                 setTimeout(function () {
-                    window.TXOPTSAPI.api.doLayout();
-                    window.TXOPTSAPI.api.sizeColumnsToFit();
+                    TXOPTSAPI.api.doLayout();
+                    TXOPTSAPI.api.sizeColumnsToFit();
                     sortDefault();
                 }, 10);
             };
 
             window.addEventListener('resize', () => {
-                if (window.TXOPTSAPI) {
-                    window.TXOPTSAPI.api.sizeColumnsToFit();
+                if (TXOPTSAPI) {
+                    TXOPTSAPI.api.sizeColumnsToFit();
                 }
             });
 
-            let txfilter = document.getElementById('tx-search');
+            let txfilter: any = document.getElementById('tx-search');
             txfilter.addEventListener('input', function () {
-                if (window.TXOPTSAPI) {
-                    window.TXOPTSAPI.api.setQuickFilter(this.value);
+                if (TXOPTSAPI) {
+                    TXOPTSAPI.api.setQuickFilter(this.value);
                 }
             });
         } else {
-            window.TXOPTSAPI.api.updateRowData({ add: txs });
-            window.TXOPTSAPI.api.resetQuickFilter();
+            TXOPTSAPI.api.updateRowData({ add: txs });
+            TXOPTSAPI.api.resetQuickFilter();
             sortDefault();
         }
     }
@@ -2355,7 +2363,7 @@ function handleTransactions() {
 
         let txs = wsession.get('txNew');
         if (!txs.length) {
-            //if(window.TXGRID === null ) setTxFiller(true);
+            //if(TXGRID === null ) setTxFiller(true);
             return;
         }
         setTxFiller();
@@ -2422,7 +2430,7 @@ function handleTransactions() {
         event.target.dataset.dir = targetDir;
         resetTxSortMark();
         event.target.classList.add(targetDir);
-        window.TXOPTSAPI.api.setSortModel(getSortModel('rawAmount', targetDir));
+        TXOPTSAPI.api.setSortModel(getSortModel('rawAmount', targetDir));
     });
 
 
@@ -2433,7 +2441,7 @@ function handleTransactions() {
         event.target.dataset.dir = targetDir;
         resetTxSortMark();
         event.target.classList.add(targetDir);
-        window.TXOPTSAPI.api.setSortModel(getSortModel('timestamp', targetDir));
+        TXOPTSAPI.api.setSortModel(getSortModel('timestamp', targetDir));
     });
 
     // export
@@ -2611,9 +2619,9 @@ function initHandlers() {
     }
 
     function handleFormEnter(el) {
-        try { clearTimeout(window.enterHandler); } catch (_e) { }
-        let key = event.key;
-        window.enterHandler = setTimeout(() => {
+        try { clearTimeout((window as any).enterHandler); } catch (_e) { }
+        let key = (event as any).key;
+        (window as any).enterHandler = setTimeout(() => {
             if (key === 'Enter') {
                 let section = el.closest('.section');
                 let target = section.querySelector('button:not(.notabindex)');
@@ -2678,7 +2686,7 @@ function initHandlers() {
             let el = genericEditableInputs[ui];
             el.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
-                pasteMenu.popup(remote.getCurrentWindow());
+                pasteMenu.popup((remote.getCurrentWindow() as any)) ;
             }, false);
         }
         // generic browse path btn event
@@ -2703,9 +2711,9 @@ function initHandlers() {
             el.addEventListener('keyup', handleFormEnter.bind(this, el));
         }
         wsutil.liveEvent('dialog input:not(.noenter)', 'keyup', (e) => {
-            let key = event.key;
-            try { clearTimeout(window.enterHandler); } catch (_e) { }
-            window.enterHandler = setTimeout(() => {
+            let key = (event as any).key;
+            try { clearTimeout((window as any).enterHandler); } catch (_e) { }
+            (window as any).enterHandler = setTimeout(() => {
                 if (key === 'Enter') {
                     let section = e.target.closest('dialog');
                     let target = section.querySelector('button:not(.notabindex)');
@@ -2927,7 +2935,7 @@ function fetchNodeInfo(force?: boolean) {
             new Promise((resolve) =>
                 setTimeout(() => {
                     let fakeout = { "address": "", "amount": 0, "status": "KO" };
-                    window.FETCHNODESIG = controller;
+                    FETCHNODESIG = controller;
                     return resolve(fakeout);
                 }, timeout)
             )
@@ -2939,14 +2947,14 @@ function fetchNodeInfo(force?: boolean) {
     let opt = document.createElement('option');
     opt.text = "Updating node list, please wait...";
     opt.value = "-";
-    opt.setAttribute('selected', true);
+    (opt as any).setAttribute('selected', true);
     walletOpenInputNode.add(opt, null);
     walletOpenInputNode.setAttribute('disabled', true);
     walletOpenInputNode.dataset.updating = 1;
     walletOpenNodeLabel.innerHTML = '<i class="fas fa-sync fa-spin"></i> Updating node list, please wait...';
     walletOpenSelectBox.dataset.loading = "1";
 
-    window.ELECTRON_ENABLE_SECURITY_WARNINGS = false;
+    ELECTRON_ENABLE_SECURITY_WARNINGS = false;
     let aliveNodes = settings.get('pubnodes_tested', []);
     if (aliveNodes.length && !force) {
         initNodeSelection(settings.get('node_address'));
@@ -2969,10 +2977,10 @@ function fetchNodeInfo(force?: boolean) {
             return fetchWait(url)
                 .then((response) => {
                     if (response.hasOwnProperty('status')) { // fake/timeout response
-                        try { window.FETCHNODESIG.abort(); } catch (e) { }
+                        try { FETCHNODESIG.abort(); } catch (e) { }
                         return response;
                     } else {
-                        return response.json();
+                        return (response as any).json();
                     }
                 }).then(json => {
                     if (!json || !json.hasOwnProperty("address") || !json.hasOwnProperty("amount")) {

@@ -9,7 +9,7 @@ import * as log from 'electron-log';
 const wsutil = new Utils();
 const brwin: any = remote.getCurrentWindow();
 const settings = new Store({ name: 'Settings' });
-const sessConfig = { debug: remote.app.debug, walletConfig: remote.app.walletConfig };
+const sessConfig = { debug: (remote as any).app.debug, walletConfig: (remote as any).app.walletConfig };
 
 const wsession = new WalletShellSession(sessConfig);
 
